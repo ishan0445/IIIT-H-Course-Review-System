@@ -35,7 +35,7 @@
                 for a course with course title or course ID:
                 <div class="field">
                     <p class="control">
-                        <input class="input" type="text" placeholder="Find a course">
+                        <input id="searchInput" class="input" type="text" placeholder="Find a course">
                     </p>
                 </div>
             </p>
@@ -49,7 +49,7 @@
             Courses:
         </p>
 
-        <div class="columns is-multiline is-mobile">
+        <div id="courseContainer" class="columns is-multiline is-mobile">
             <div class="column is-one-third">
                 <div class="card">
                     <div class="card-content">
@@ -68,9 +68,87 @@
                 </div>
             </div>
 
+            <div class="column is-one-third">
+                <div class="card">
+                    <div class="card-content">
+                        <p class="title">
+                            Discrete Mathematics and Algorithms
+                        </p>
+                    </div>
 
+                    <footer class="card-footer">
+                        <p class="card-footer-item">
+                            <span>
+                                <a href=""><i class="fa fa-star"></i> Get Reviews</a>
+                            </span>
+                        </p>
+                    </footer>
+                </div>
+            </div>
+
+            <div class="column is-one-third">
+                <div class="card">
+                    <div class="card-content">
+                        <p class="title">
+                            Database Systems
+                        </p>
+                    </div>
+
+                    <footer class="card-footer">
+                        <p class="card-footer-item">
+                            <span>
+                                <a href=""><i class="fa fa-star"></i> Get Reviews</a>
+                            </span>
+                        </p>
+                    </footer>
+                </div>
+            </div>
+
+            <div class="column is-one-third">
+                <div class="card">
+                    <div class="card-content">
+                        <p class="title">
+                            Operating Systems
+                        </p>
+                    </div>
+
+                    <footer class="card-footer">
+                        <p class="card-footer-item">
+                            <span>
+                                <a href=""><i class="fa fa-star"></i> Get Reviews</a>
+                            </span>
+                        </p>
+                    </footer>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Java Script -->
+    <script type="text/javascript">
+        let searchEL = document.getElementById('searchInput');
+
+        searchEL.addEventListener('keyup', filterCourse);
+
+        function filterCourse() {
+            let searchELValue = document.getElementById('searchInput').value.toUpperCase();
+            // console.log(searchELValue);
+
+            let courseContainer = document.getElementById('courseContainer');
+            let courseList = courseContainer.querySelectorAll('div.column.is-one-third');
+
+            for(let i = 0;i<courseList.length;i++){
+                let card = courseList[i].getElementsByClassName('title')[0];
+
+                if (card.innerHTML.toUpperCase().indexOf(searchELValue) > -1) {
+                    courseList[i].style.display = '';
+                } else {
+                    courseList[i].style.display = 'none';
+                }
+            }
+        }
+
+    </script>
 
 </body>
 
