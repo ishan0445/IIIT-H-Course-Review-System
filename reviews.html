@@ -20,7 +20,13 @@
             </a>
         </div>
 
-        <div class="nav-right">
+        <span id="nav-toggle" class="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+        </span>
+
+        <div id="nav-menu" class="nav-right nav-menu">
             <a href="reviews.html" class="nav-item is-active">Reviews</a>
             <a href="prof.html" class="nav-item">Professors</a>
         </div>
@@ -126,6 +132,7 @@
 
     <!-- Java Script -->
     <script type="text/javascript">
+        // search functionality
         let searchEL = document.getElementById('searchInput');
 
         searchEL.addEventListener('keyup', filterCourse);
@@ -148,6 +155,19 @@
             }
         }
 
+
+        // navbar toggle
+        document.getElementById("nav-toggle").addEventListener("click", toggleNav);
+
+        function toggleNav() {
+            var nav = document.getElementById("nav-menu");
+            var className = nav.getAttribute("class");
+            if (className == "nav-right nav-menu") {
+                nav.className = "nav-right nav-menu is-active";
+            } else {
+                nav.className = "nav-right nav-menu";
+            }
+        }
     </script>
 
 </body>
