@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>IIIT-H CRS</title>
+
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="reviews.html" class="nav-item">
+                <h1 class="title is-4">IIIT-H Course Review System</h1>
+            </a>
+        </div>
+
+        <span id="nav-toggle" class="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+        </span>
+
+        <div id="nav-menu" class="nav-right nav-menu">
+            <a href="reviews.html" class="nav-item">Reviews</a>
+            <a href="prof.html" class="nav-item is-active">Professors</a>
+        </div>
+    </nav>
+
+    <section class="hero is-primary">
+        <div class="container hero-body">
+            <p class="title">
+                Search
+            </p>
+            <p class="subtitle">
+                for a professor:
+                <div class="field">
+                    <p class="control">
+                        <input id="searchInputProfs" class="input" type="text" placeholder="Find professor">
+                    </p>
+                </div>
+            </p>
+
+        </div>
+    </section>
+
+    <div class="container">
+
+        <p class="title">
+            Professor:
+        </p>
+
+        <div id="profContainer" class="columns is-multiline">
+
+
+        </div>
+    </div>
+
+
+    <!-- Java Script -->
+    <script type="text/javascript"  src="./js/scripts.js"> </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script>
+    // search functanility in profs.html
+    let searchELProfs = document.getElementById('searchInputProfs');
+
+    searchELProfs.addEventListener('keyup', filterProfs);
+
+    function filterProfs() {
+        let searchELValue = document.getElementById('searchInputProfs').value.toUpperCase();
+        // console.log(searchELValue);
+
+        let profContainer = document.getElementById('profContainer');
+        let profList = profContainer.querySelectorAll('div.column.is-one-third');
+
+        for (let i = 0; i < profList.length; i++) {
+            let card = profList[i].getElementsByClassName('title')[0];
+
+            if (card.innerHTML.toUpperCase().indexOf(searchELValue) > -1) {
+                profList[i].style.display = '';
+            } else {
+                profList[i].style.display = 'none';
+            }
+        }
+
+    }
+
+    //Get Request to fetch professors
+    $(function(){
+        $.get("/getProfs", function(data, status){
+            // console.log(JSON.stringify(data,undefined,3));
+            for(let i = 0;i<data.profData.length;i++){
+                let profName = data.profData[i].profName;
+                let html = '<div class="column is-one-third">'+
+                        '<div class="card">'+
+                        '<div class="card-content">'+
+                        '<p class="title">'+
+                        profName+
+                        '</p>'+
+                        '</div>'+
+                        '<footer class="card-footer">'+
+                        '<p class="card-footer-item">'+
+                        '<span>'+
+                        '<a href=""><i class="fa fa-star"></i> Get Reviews</a>'+
+                        '</span>'+
+                        '</p>'+
+                        '</footer>'+
+                        '</div>'+
+                        '</div>';
+                $('#profContainer').append(html);
+            }
+        });
+    });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+.button.nav-item {
+    margin-top: 7px;
+}
+
+.modalSearchOverlay {
+    position: relative;
+}
+
+.modalSearchOverlay {
+    background: white;
+    position: absolute;
+    z-index: 99;
+    width: 100%;
+}
