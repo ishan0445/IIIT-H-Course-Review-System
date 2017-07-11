@@ -28,7 +28,7 @@
         </span>
 
         <div id="nav-menu" class="nav-right nav-menu">
-            <a id="addReviewbutton" class="nav-item button is-primary is-outlined"><i class="fa fa-star"></i> Add Review</a>
+            <a id="addReviewbutton" class="nav-item button is-primary"><i class="fa fa-star"></i> Add Review</a>
             <a href="reviews.html" class="nav-item is-active">Reviews</a>
             <a href="prof.html" class="nav-item">Professors</a>
         </div>
@@ -148,11 +148,12 @@
                     <div class="field">
                       <label class="label">Course</label>
                       <p class="control has-icons-left">
-                        <input id="modalCourse" class="input is-primary" type="text" placeholder="Course Name">
+                        <input id="modalCourse" class="input" type="text" placeholder="Course Name">
                         <span class="icon is-small is-left">
                           <i class="fa fa-book"></i>
                         </span>
                       </p>
+                      <p id="modalHelpCourse" class="help is-danger">course should be selected from the list</p>
                       <table class="table modalSearchOverlay is-bordered is-narrow">
                           <tbody id="modalCourseList">
                           </tbody>
@@ -163,11 +164,12 @@
                     <div class="field">
                       <label class="label">Professor</label>
                       <p class="control has-icons-left">
-                        <input id="modalProf" class="input is-primary" type="text" placeholder="Professor Name">
+                        <input id="modalProf" class="input" type="text" placeholder="Professor Name">
                         <span class="icon is-small is-left">
                           <i class="fa fa-user"></i>
                         </span>
                       </p>
+                      <p id="modalHelpProf" class="help is-danger">professor should be selected from the list</p>
                       <table class="table modalSearchOverlay is-bordered is-narrow">
                           <tbody id="modalProfList">
                           </tbody>
@@ -178,7 +180,7 @@
                     <div class="field">
                       <label class="label">Rating</label>
                       <p class="control">
-                        <span class="select">
+                        <span class="select is-success">
                           <select id="modalRating" >
                               <option>1</option>
                               <option>2</option>
@@ -193,8 +195,9 @@
                     <div class="field">
                       <label class="label">Review</label>
                       <p class="control">
-                        <textarea id="modalReview" class="textarea" placeholder="Textarea"></textarea>
+                        <textarea id="modalReview" class="textarea" placeholder="Review (minimum 10 characters)"></textarea>
                       </p>
+                      <p id="modalHelpReview" class="help is-danger">review should be minimum of 10 characters</p>
                     </div>
 
                     <div class="field is-grouped">
@@ -206,6 +209,9 @@
                       </p>
                     </div>
 
+                    <article id="modalSuccessMessage" class="message">
+
+                  </article>
                 </div>
             </div>
 
@@ -243,6 +249,14 @@
         }
 
         $(function(){
+            var isCourseSelected = false;
+            var isProfSelected = false;
+            var isReviewMinLength = false;
+
+            $('#modalSuccessMessage, #modalHelpCourse, #modalHelpProf, #modalHelpReview').hide();
+
+
+
             // Modal Show
             $('#addReviewbutton').click(function(){
                 $('.modal').addClass('is-active');
@@ -271,11 +285,13 @@
             });
             $('#modalCourseList').hide();
             $('#modalCourse').keyup(function(){
-
+                $('#modalHelpCourse').show();
+                $(this).addClass('is-danger');
+                isCourseSelected = false;
                 if($(this).val() === ''){
                     $('#modalCourseList').hide();
                 }else{
-                    console.log($(this).val());
+                    // console.log($(this).val());
                     $('#modalCourseList').show();
 
                     $('.modalCourseSearchEntry').each(function(){
@@ -290,6 +306,9 @@
 
             });
             $('#modalCourseList').on('click','tr.modalCourseSearchEntry' , function(){
+                isCourseSelected = true;
+                $('#modalCourse').removeClass('is-danger').addClass('is-success');
+                $('#modalHelpCourse').hide();
                 $('#modalCourseList').hide();
                 $('#modalCourse').val($(this).text());
             });
@@ -300,7 +319,7 @@
 
             // Modal Profs search list
             $.get("/getProfs", function(data, status){
-                console.log('Status: '+status);
+                // console.log('Status: '+status);
                 for(let i = 0;i<data.profData.length;i++){
                     let profName = data.profData[i].profName;
                     let html = '<tr><td class="modalProfSearchEntry">'+
@@ -313,6 +332,9 @@
             });
             $('#modalProfList').hide();
             $('#modalProf').keyup(function(){
+                $('#modalHelpProf').show();
+                $(this).addClass('is-danger');
+                isProfSelected = false;
                 if($(this).val() === ''){
                     $('#modalProfList').hide();
                 }else{
@@ -329,20 +351,57 @@
 
             });
             $('#modalProfList').on('click','tr td.modalProfSearchEntry' , function(){
-                console.log('Clicked..');
+                isProfSelected = true;
+                $(this).addClass('is-success');
+                $('#modalProf').removeClass('is-danger').addClass('is-success');
+                $('#modalHelpProf').hide();
                 $('#modalProfList').hide();
                 $('#modalProf').val($(this).text());
             });
 
 
+            //min length check for Review
+            $('#modalReview').keyup(function(){
+                // console.log($(this).val().trim().length);
+                if($(this).val().trim().length < 10 &&  $(this).val().trim().length > 0){
+                    isReviewMinLength = false;
+                    $(this).addClass('is-danger');
+                    $('#modalHelpReview').show();
+                }else{
+                    isReviewMinLength = true;
+                    $(this).removeClass('is-danger');
+                    $('#modalHelpReview').hide();
+                }
+            });
+
+            var isValidEntry =  function(){
+                if(isProfSelected && isCourseSelected && isReviewMinLength)
+                    return true;
+                return false;
+            }
 
             // Modal Submit
             $('#modalSubmit').click(function(){
                 $(this).addClass('is-loading');
+                if(isValidEntry() == false){
+                    $('#modalSubmit').removeClass('is-loading');
+                    $('#modalSuccessMessage').show();
+                    $('#modalSuccessMessage').addClass('is-danger');
+                    $('#modalSuccessMessage').html('<div class="message-header"><p>please correct the errors</p></div>');
+                    setTimeout(function() {
+                        $("#modalSuccessMessage").hide();
+                    }, 3000);
+                    return;
+                }
+
+
+
+
                 // console.log('Clicked..' + JSON.stringify(courseListGlobal,undefined,3));
                 let takenBy = $('#modalProf').val();
                 var courseName = $('#modalCourse').val().split(']')[1].trim();
                 var courseID = $('#modalCourse').val().split(']')[0].substr(1);
+
                 var rating = parseInt($('#modalRating').val());
                 var description = $('#modalReview').val();
 
@@ -354,7 +413,8 @@
                     rating,
                     description
                 };
-                console.log(JSON.stringify(jsonData,undefined,3));
+                // console.log(JSON.stringify(jsonData,undefined,3));
+
                 $.ajax({
                     type: 'POST',
                     contentType: 'application/json',
@@ -363,8 +423,18 @@
                     dataType: "json",
 
                     success: function(resultData) {
-
+                        isCourseSelected = false;
+                        isProfSelected = false;
+                        $('#modalCourse').removeClass('is-success');
+                        $('#modalProf').removeClass('is-success');
+                        $('#modalReview').removeClass('is-success');
                         $('#modalSubmit').removeClass('is-loading');
+                        $('#modalSuccessMessage').show();
+                        $('#modalSuccessMessage').addClass('is-success');
+                        $('#modalSuccessMessage').html('<div class="message-header"><p>Review posted</p></div>');
+                        setTimeout(function() {
+                            $("#modalSuccessMessage").hide();
+                        }, 3000);
                         //Clear Modal
                         $('#modalProf').val('');
                         $('#modalCourse').val('');
@@ -372,8 +442,18 @@
                         $('#modalReview').val('');
                     },
                     error: function (textStatus, errorThrown) {
-                        alert("Something went wrong");
+                        isCourseSelected = false;
+                        isProfSelected = false;
+                        $('#modalCourse').removeClass('is-success');
+                        $('#modalReview').removeClass('is-success');
+                        $('#modalProf').removeClass('is-success');
                         $('#modalSubmit').removeClass('is-loading');
+                        $('#modalSuccessMessage').show();
+                        $('#modalSuccessMessage').addClass('is-danger');
+                        $('#modalSuccessMessage').html('<div class="message-header"><p>Somethin went wrong</p></div>');
+                        setTimeout(function() {
+                            $("#modalSuccessMessage").hide();
+                        }, 3000);
                         //Clear Modal
                         $('#modalProf').val('');
                         $('#modalCourse').val('');
@@ -381,16 +461,6 @@
                         $('#modalReview').val('');
                     }
                 });
-
-
-
-
-
-                // console.log('takenBy:'+takenBy);
-                // console.log('courseID:'+courseID);
-                // console.log('courseName:'+courseName);
-                // console.log('rating:'+rating);
-                // console.log('review:'+description);
             });
 
         });
