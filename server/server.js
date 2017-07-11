@@ -3,45 +3,82 @@ const _ = require('lodash')
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
- 
+
 const {mongoose} = require('./db/mongoose');
 const {newProf,review,newcourse} = require('./models/crs');
 // const {User} = require('./models/user');
 // const {authenticate} = require('./middleware/authenticate');
- 
+
 const app = express();
 const port = process.env.PORT;
- 
+
 app.use(bodyParser.json());
 
 app.use(express.static(__dirname+'/public'));
- 
+
 app.post('/newProfEntry',(req,res) => {
-  var crsData = new newProf({
-    profName: req.body.profName,
-    // _creator:req.user._id
- 
-  });
-  crsData.save().then((doc) => {
-    res.send(doc);
-  },(e) => {
-    res.status(400).send(e);
-  })
+  if ( 'profArray' in req.body && req.body.profArray instanceof Array ) {
+    // do stuff
+    var count = 0;
+      for (var i=0; i<req.body.profArray.length; i++){
+    // here jsonObject['sync_contact_list'][i] is your current "bit"
+    count = count+1;
+      var crsData = new newProf({
+        profName: req.body.profArray[i].profName
+        // _creator:req.user._id
+
+      });
+      crsData.save();
+
+  }
+  res.send(`${count} values inserted in bulk`);
+}
+else {
+
+    var crsData = new newProf({
+      profName: req.body.profName
+      // _creator:req.user._id
+
+    });
+    crsData.save().then((doc) => {
+      res.send(doc);
+    },(e) => {
+      res.status(400).send(e);
+    })
+}
 });
 app.post('/newCourseEntry',(req,res) => {
-  var crsData = new newcourse({
-    courseID: req.body.courseID,
-    courseName: req.body.courseName
-  });
-  crsData.save().then((doc) => {
-    res.send(doc);
-  },(e) => {
-    res.status(400).send(e);
-  })
+  if ( 'courseArray' in req.body && req.body.courseArray instanceof Array ) {
+    // do stuff
+    var count = 0;
+      for (var i=0; i<req.body.courseArray.length; i++){
+    // here jsonObject['sync_contact_list'][i] is your current "bit"
+    count = count+1;
+    var crsData = new newcourse({
+      courseID: req.body.courseArray[i].courseID,
+      courseName: req.body.courseArray[i].courseName
+    });
+    crsData.save();
+
+  }
+  res.send(`${count} values inserted in bulk`);
+}
+else {
+    var crsData = new newcourse({
+      courseID: req.body.courseID,
+      courseName: req.body.courseName
+    });
+    crsData.save().then((doc) => {
+      res.send(doc);
+    },(e) => {
+      res.status(400).send(e);
+    })
+}
+
 });
 app.post('/newReviewEntry',(req,res) => {
     console.log('here: '+JSON.stringify(req.body,undefined,3));
-  
+
   var crsData = new review({
     takenBy: req.body.takenBy,
     courseID: req.body.courseID,
@@ -49,7 +86,7 @@ app.post('/newReviewEntry',(req,res) => {
     rating: req.body.rating,
     description: req.body.description
     // _creator:req.user._id
- 
+
   });
 
   crsData.save().then((doc) => {
@@ -59,8 +96,8 @@ app.post('/newReviewEntry',(req,res) => {
     console.log(e);
   })
 });
- 
- 
+
+
 app.get('/getProfs',(req,res) => {
   newProf.find({
     // _creator:req.user._id
@@ -88,10 +125,10 @@ app.get('/getReview',(req,res) => {
     res.status(400).send(e);
   });
 });
- 
+
 app.listen(port,() => {
   console.log(`Started on port ${port}`);
 });
- 
- 
+
+
 module.exports = {app};
