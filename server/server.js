@@ -3,10 +3,8 @@ const _ = require('lodash')
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
-var mongoosePaginate = require('mongoose-paginate');
 const {mongoose} = require('./db/mongoose');
 const {newProf,review,newcourse} = require('./models/crs');
-// newProf.plugin(mongoosePaginate);
 
 // const {User} = require('./models/user');
 // const {authenticate} = require('./middleware/authenticate');
@@ -118,22 +116,23 @@ app.get('/getCourses',(req,res) => {
     res.status(400).send(e);
   });
 });
-app.get('/getReview',(req,res) => {
-  review.find({
-    // _creator:req.user._id
-  }).then((reviewData) => {
-    res.send({reviewData});
-  },(e) => {
-    res.status(400).send(e);
-  });
-});
+// app.get('/getReview',(req,res) => {
+  // review.find({
+  //   // _creator:req.user._id
+  // }).then((reviewData) => {
+  //   res.send({reviewData});
+  // },(e) => {
+  //   res.status(400).send(e);
+  // });
+//   res.redirect('/');
+// });
 app.get('/allReviews/page=:page&limit=:limit',(req,res) => {
   var pno = req.params.page;
   var limit = req.params.limit;
   Model.paginate({}, { offset: 20, limit: 10 }).then(function(result) {
   // ...
 });
-  res.send({pno,limit})
+  res.send({pno,limit});
   // console.log(pno+" "+limit);
   // review.find({
   //   // _creator:req.user._id

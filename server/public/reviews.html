@@ -54,13 +54,51 @@
     <div class="container">
 
         <p class="title">
-            Courses:
+            Reviews:
         </p>
 
-        <div id="courseContainer" class="columns is-multiline">
+        <!-- Pagination Top -->
+        <nav class="pagination">
+          <a class="pagination-previous">Previous</a>
+          <a class="pagination-next">Next</a>
+          <ul class="pagination-list">
+            <li class="pagination-first-page">
+              <a class="pagination-link">1</a>
+            </li>
+            <li class="pagination-ellipsis-with-end">
+              <span class="pagination-ellipsis">&hellip;</span>
+            </li>
+            <li class="pagination-last-page">
+              <a class="pagination-link">45</a>
+            </li>
+          </ul>
+        </nav>
 
+        <div id="reviewContainer">
+            <!-- Actual Reviews -->
         </div>
+
+
+        <!-- Pagination Bottom -->
+        <nav class="pagination">
+          <a class="pagination-previous">Previous</a>
+          <a class="pagination-next">Next</a>
+          <ul class="pagination-list">
+            <li class="pagination-first-page">
+              <a class="pagination-link">1</a>
+            </li>
+            <li class="pagination-ellipsis-with-end">
+              <span class="pagination-ellipsis">&hellip;</span>
+            </li>
+            <li class="pagination-last-page">
+              <a class="pagination-link">45</a>
+            </li>
+          </ul>
+        </nav>
     </div>
+
+
+
 
     <!-- AddReview Modal -->
     <div class="modal">
@@ -175,6 +213,11 @@
             var isCourseSelected = false;
             var isProfSelected = false;
             var isReviewMinLength = false;
+            var countPages;
+            var isNext;
+            var isPrev;
+            var nextUrl;
+            var prevUrl;
 
             // $('table#dropdown-search').height($('td').height() * 5);
 
@@ -333,7 +376,6 @@
                 var rating = parseInt($('#modalRating').val());
                 var description = $('#modalReview').val();
 
-
                 jsonData = {
                     takenBy,
                     courseID,
@@ -390,6 +432,96 @@
                     }
                 });
             });
+
+
+            // fetching all Reviews
+            var fetchReviewsByPageUrl = function(pageUrl){
+                $('#reviewContainer').empty();
+                console.log('GET '+pageUrl);
+                $.get(pageUrl, function(data, status){
+                    // console.log('Status: '+status);
+                    // console.log(JSON.stringify(data,undefined,3));
+                    for(let i = 0;i<data.allReviews.length;i++){
+                        let takenBy = data.allReviews[i].takenBy;
+                        let courseID = data.allReviews[i].courseID;
+                        let courseName = data.allReviews[i].courseName;
+                        let rating = data.allReviews[i].rating;
+                        let description = data.allReviews[i].description;
+                        // Setting rating stars
+                        let stars = '';
+                        for(let i = rating;i>0;i--)
+                            stars+='<i class="fa fa-star"></i>';
+                        for(let i = rating;i<5;i++)
+                            stars+='<i class="fa fa-star-o"></i>';
+                        let html = '<div class="columns"><div class="column is-12"> <div class="card"> <div class="card-header"> <p class="card-header-title"> ['+courseID+'] '+courseName+'</p> </div> <div class="card-content"> '+description+' </div> <footer class="card-footer"> <span class="card-footer-item">'+stars+'</span> <span class="card-footer-item"> '+takenBy+' </span> </footer> </div> </div> </div>';
+                        $('#reviewContainer').append(html);
+                    }
+
+                    //  setting up the pagination vlues
+                    countPages = data.count;
+                    isNext = data.next;
+                    isPrev = data.prev;
+                    nextUrl = data.nextUrl;
+                    prevUrl = data.prevUrl;
+
+                    $('.pagination-last-page > a').text(''+Math.ceil(countPages/10.0))
+
+                    if(!isPrev){
+                        $('.pagination-previous').attr( 'disabled', 'disabled' );
+                    }else{
+                        $('.pagination-previous').removeAttr( 'disabled');
+                    }
+
+                    if(!isNext){
+                        $('.pagination-next').attr( 'disabled', 'disabled' );
+                    }else{
+                        $('.pagination-next').removeAttr( 'disabled');
+                    }
+
+
+                    if(countPages/10.0 <= 1){
+                        $('.pagination-ellipsis-with-end, .pagination-last-page').hide();
+                    }else{
+                        $('.pagination-ellipsis-with-end, .pagination-last-page').show();
+                    }
+                });
+            }
+
+
+
+
+            var fetchReviewsByPageNo = function(pageNo){
+                var pageUrl = "/allReviews/"+pageNo+"/";
+                fetchReviewsByPageUrl(pageUrl);
+            }
+
+
+            fetchReviewsByPageNo(1);
+            // Pagination Listeners
+
+            $('.pagination-next').on('click',function(){
+                if(isNext){
+                    fetchReviewsByPageUrl(nextUrl);
+                }
+            });
+            $('.pagination-previous').on('click',function(){
+                if(isPrev){
+                    fetchReviewsByPageUrl(prevUrl);
+                }
+            });
+
+            $('.pagination-first-page').on('click',function(){
+                if(isPrev){
+                    fetchReviewsByPageNo(1);
+                }
+            });
+
+            $('.pagination-last-page').on('click',function(){
+                if(isNext){
+                    fetchReviewsByPageNo(Math.ceil(countPages/10.0));
+                }
+            });
+
 
         });
 
