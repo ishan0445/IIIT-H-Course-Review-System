@@ -58,84 +58,7 @@
         </p>
 
         <div id="courseContainer" class="columns is-multiline">
-            <div class="column is-one-third">
-                <div class="card">
-                    <div class="card-content">
-                        <p class="title">
-                            Advance Problem Solving
-                        </p>
-                        <p class="title rating-bar">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                        </p>
-                    </div>
 
-                    <footer class="card-footer">
-                        <p class="card-footer-item">
-                            <span>
-                                <a href=""><i class="fa fa-star"></i> Get Reviews</a>
-                            </span>
-                        </p>
-                    </footer>
-                </div>
-            </div>
-
-            <div class="column is-one-third">
-                <div class="card">
-                    <div class="card-content">
-                        <p class="title">
-                            Discrete Mathematics and Algorithms
-                        </p>
-                    </div>
-
-                    <footer class="card-footer">
-                        <p class="card-footer-item">
-                            <span>
-                                <a href=""><i class="fa fa-star"></i> Get Reviews</a>
-                            </span>
-                        </p>
-                    </footer>
-                </div>
-            </div>
-
-            <div class="column is-one-third">
-                <div class="card">
-                    <div class="card-content">
-                        <p class="title">
-                            Database Systems
-                        </p>
-                    </div>
-
-                    <footer class="card-footer">
-                        <p class="card-footer-item">
-                            <span>
-                                <a href=""><i class="fa fa-star"></i> Get Reviews</a>
-                            </span>
-                        </p>
-                    </footer>
-                </div>
-            </div>
-
-            <div class="column is-one-third">
-                <div class="card">
-                    <div class="card-content">
-                        <p class="title">
-                            Operating Systems
-                        </p>
-                    </div>
-
-                    <footer class="card-footer">
-                        <p class="card-footer-item">
-                            <span>
-                                <a href=""><i class="fa fa-star"></i> Get Reviews</a>
-                            </span>
-                        </p>
-                    </footer>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -154,7 +77,7 @@
                         </span>
                       </p>
                       <p id="modalHelpCourse" class="help is-danger">course should be selected from the list</p>
-                      <table class="table modalSearchOverlay is-bordered is-narrow">
+                      <table id="dropdown-search" class="table modalSearchOverlay is-bordered is-narrow">
                           <tbody id="modalCourseList">
                           </tbody>
                       </table>
@@ -170,7 +93,7 @@
                         </span>
                       </p>
                       <p id="modalHelpProf" class="help is-danger">professor should be selected from the list</p>
-                      <table class="table modalSearchOverlay is-bordered is-narrow">
+                      <table id="dropdown-search" class="table modalSearchOverlay is-bordered is-narrow">
                           <tbody id="modalProfList">
                           </tbody>
                       </table>
@@ -253,6 +176,8 @@
             var isProfSelected = false;
             var isReviewMinLength = false;
 
+            // $('table#dropdown-search').height($('td').height() * 5);
+
             $('#modalSuccessMessage, #modalHelpCourse, #modalHelpProf, #modalHelpReview').hide();
 
 
@@ -280,6 +205,9 @@
                         courseName +
                         '</td></tr>';
                     $('#modalCourseList').append(html);
+
+                    let htmlCourse = `<div class="column is-one-third"> <div class="card"> <div class="card-content"> <p class="title"> ${courseName} </p> </div> <footer class="card-footer"> <p class="card-footer-item"> <span> <a href=""><i class="fa fa-star"></i> Get Reviews</a> </span> </p> </footer> </div> </div>`
+                    $('#courseContainer').append(htmlCourse);
                     // console.log(courseID);
                 }
             });

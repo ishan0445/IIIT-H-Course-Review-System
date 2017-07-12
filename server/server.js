@@ -24,7 +24,7 @@ app.post('/newProfEntry',(req,res) => {
     // here jsonObject['sync_contact_list'][i] is your current "bit"
     count = count+1;
       var crsData = new newProf({
-        profName: req.body.profArray[i].profName
+        "profName": req.body.profArray[i]
         // _creator:req.user._id
 
       });

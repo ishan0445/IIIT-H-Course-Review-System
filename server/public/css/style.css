@@ -12,3 +12,10 @@
     z-index: 99;
     width: 100%;
 }
+
+table#dropdown-search {
+    width: inherit;
+    display: block;
+    height: 200px;
+    overflow-y: scroll;
+}
