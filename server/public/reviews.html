@@ -40,7 +40,7 @@
                 Search
             </p>
             <p class="subtitle">
-                for a course with course title or course ID:
+                for a review with course name, course ID, professor name or review content:
             </p>
             <div class="field has-addons">
               <p class="control is-expanded">
@@ -52,12 +52,6 @@
                 </a>
               </p>
             </div>
-            <!-- <div class="field">
-                    <p class="control">
-                        <input id="searchInputReview" class="input" type="text" placeholder="Find a course">
-                    </p>
-                    <
-                </div> -->
 
 
         </div>
@@ -243,7 +237,7 @@
 
             $('#searchInputBtn').click(function(){
                 let jsonData = {
-                    "query": $('#searchInput').val().trim();
+                    "query": $('#searchInput').val().trim()
                 }
                 $.ajax({
                     type: 'POST',
@@ -472,6 +466,7 @@
 
 
             var setUpPageCards = function(data){
+                $('#reviewContainer').empty();
                 for(let i = 0;i<data.allReviews.length;i++){
                     let takenBy = data.allReviews[i].takenBy;
                     let courseID = data.allReviews[i].courseID;
@@ -529,47 +524,55 @@
 
 
             // fetching all Reviews
-            var fetchReviewsByPageUrl = function(pageUrl){
+            var fetchReviewsByPageUrl = function(pageUrl,query){
                 $('#reviewContainer').empty();
-                console.log('GET '+pageUrl);
-                $.get(pageUrl, function(data, status){
-                    // set up page content
-                    setUpPageContents(data);
+                console.log('POST '+pageUrl);
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: pageUrl,
+                    data: JSON.stringify(query),
+                    dataType: "json",
+
+                    success: function(resultData) {
+                        setUpPageContents(resultData);
+                    },
+                    error: function (textStatus, errorThrown) {
+
+                    }
                 });
             }
 
-
-
-
-            var fetchReviewsByPageNo = function(pageNo){
-                var pageUrl = "/allReviews/"+pageNo+"/";
-                fetchReviewsByPageUrl(pageUrl);
+            var fetchReviewsByPageNo = function(pageNo,query){
+                var pageUrl = "/findByQuery/"+pageNo+"/";
+                fetchReviewsByPageUrl(pageUrl,query);
             }
 
 
-            fetchReviewsByPageNo(1);
+            fetchReviewsByPageNo(1,{'query':$('#searchInput').val()});
             // Pagination Listeners
 
             $('.pagination-next').on('click',function(){
                 if(isNext){
-                    fetchReviewsByPageUrl(nextUrl);
+                    fetchReviewsByPageUrl(nextUrl,{'query':$('#searchInput').val()});
                 }
             });
             $('.pagination-previous').on('click',function(){
                 if(isPrev){
-                    fetchReviewsByPageUrl(prevUrl);
+                    fetchReviewsByPageUrl(prevUrl,{'query':$('#searchInput').val()});
                 }
             });
 
             $('.pagination-first-page').on('click',function(){
                 if(isPrev){
-                    fetchReviewsByPageNo(1);
+                    fetchReviewsByPageNo(1,{'query':$('#searchInput').val()});
                 }
             });
 
             $('.pagination-last-page').on('click',function(){
                 if(isNext){
-                    fetchReviewsByPageNo(Math.ceil(countPages/10.0));
+                    fetchReviewsByPageNo(Math.ceil(countPages/10.0),{'query':$('#searchInput').val()});
                 }
             });
 

@@ -156,7 +156,8 @@ localhost:3000/findByClick/:page
 {
 	"searchBy":[{
 		"takenBy": "prof 5",
-		"courseName": "ABC Lab"
+		"courseName": "A
+    Lab"
 	}]
 }
 
@@ -213,12 +214,13 @@ app.post('/findByQuery/:page', (req, res) => {
   const page = Number.parseInt(req.params.page);
   if (page) {
     Promise.all([
-      review.find({"takenBy":{'$regex': req.body.query,$options:'i'}}).sort({timestamp:"descending"}).lean().exec(),
-      review.find({"courseName":{'$regex': req.body.query,$options:'i'}}).sort({timestamp:"descending"}).lean().exec(),
-      review.find({"description":{'$regex': req.body.query,$options:'i'}}).sort({timestamp:"descending"}).lean().exec(),
-      review.count().exec()
-    ]).then(([result1,result2,result3, count]) => {
-        const result = result1.concat(result2,result3)
+      review.find({$or: [
+        {"takenBy":{'$regex': req.body.query,$options:'i'}},
+          {"courseName":{'$regex': req.body.query,$options:'i'}},
+          {"description":{'$regex': req.body.query,$options:'i'}},
+          {"courseID":{'$regex': req.body.query,$options:'i'}}]
+        }).sort({timestamp:"descending"}).lean().exec()
+    ]).then(([result]) => {
         const paginateCollection = paginate(result,page, limit);
         //console.log(JSON.stringify(paginateCollection.data,undefined,3));
         const next = paginateCollection.currentPage < paginateCollection.totaPages
