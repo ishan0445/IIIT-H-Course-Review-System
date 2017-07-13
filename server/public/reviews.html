@@ -30,7 +30,8 @@
         <div id="nav-menu" class="nav-right nav-menu">
             <a id="addReviewbutton" class="nav-item button is-primary"><i class="fa fa-star"></i> Add Review</a>
             <a href="reviews.html" class="nav-item is-active">Reviews</a>
-            <a href="prof.html" class="nav-item">Professors</a>
+            <a href="courses.html" class="nav-item">Courses</a>
+            <a href="profs.html" class="nav-item">Professors</a>
         </div>
     </nav>
 
@@ -192,30 +193,56 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <script>
-        // // search functionality in review.html
-        // let searchELReview = document.getElementById('searchInputReview');
-        //
-        // searchELReview.addEventListener('keyup', filterCourse);
-        //
-        // function filterCourse() {
-        //     let searchELValue = document.getElementById('searchInputReview').value.toUpperCase();
-        //     // console.log(searchELValue);
-        //
-        //     let courseContainer = document.getElementById('courseContainer');
-        //     let courseList = courseContainer.querySelectorAll('div.column.is-one-third');
-        //
-        //     for(let i = 0;i<courseList.length;i++){
-        //         let card = courseList[i].getElementsByClassName('title')[0];
-        //
-        //         if (card.innerHTML.toUpperCase().indexOf(searchELValue) > -1) {
-        //             courseList[i].style.display = '';
-        //         } else {
-        //             courseList[i].style.display = 'none';
-        //         }
-        //     }
-        // }
-
         $(function(){
+            // fetching all Reviews
+            var fetchReviewsByPageUrl = function(pageUrl,query){
+                $('#reviewContainer').empty();
+                console.log('POST '+pageUrl);
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: pageUrl,
+                    data: JSON.stringify(query),
+                    dataType: "json",
+
+                    success: function(resultData) {
+                        setUpPageContents(resultData);
+                    },
+                    error: function (textStatus, errorThrown) {
+
+                    }
+                });
+            }
+
+            var fetchReviewsByPageNo = function(pageNo,query){
+                var pageUrl = "/findByQuery/"+pageNo+"/";
+                fetchReviewsByPageUrl(pageUrl,query);
+            }
+            //urlParam
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : sParameterName[1];
+                    }
+                }
+            };
+
+            if(getUrlParameter('course')){
+                $('#searchInput').val(getUrlParameter('course'));
+            }else if(getUrlParameter('prof')){
+                $('#searchInput').val(getUrlParameter('prof'));
+            }
+            fetchReviewsByPageNo(1,{'query':$('#searchInput').val()});
+
+
             var isCourseSelected = false;
             var isProfSelected = false;
             var isReviewMinLength = false;
@@ -523,36 +550,11 @@
             }
 
 
-            // fetching all Reviews
-            var fetchReviewsByPageUrl = function(pageUrl,query){
-                $('#reviewContainer').empty();
-                console.log('POST '+pageUrl);
-
-                $.ajax({
-                    type: 'POST',
-                    contentType: 'application/json',
-                    url: pageUrl,
-                    data: JSON.stringify(query),
-                    dataType: "json",
-
-                    success: function(resultData) {
-                        setUpPageContents(resultData);
-                    },
-                    error: function (textStatus, errorThrown) {
-
-                    }
-                });
-            }
-
-            var fetchReviewsByPageNo = function(pageNo,query){
-                var pageUrl = "/findByQuery/"+pageNo+"/";
-                fetchReviewsByPageUrl(pageUrl,query);
-            }
 
 
-            fetchReviewsByPageNo(1,{'query':$('#searchInput').val()});
+
+
             // Pagination Listeners
-
             $('.pagination-next').on('click',function(){
                 if(isNext){
                     fetchReviewsByPageUrl(nextUrl,{'query':$('#searchInput').val()});
@@ -575,11 +577,7 @@
                     fetchReviewsByPageNo(Math.ceil(countPages/10.0),{'query':$('#searchInput').val()});
                 }
             });
-
-
         });
-
-
     </script>
 </body>
 

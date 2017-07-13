@@ -7,7 +7,6 @@
 }
 
 .modalSearchOverlay {
-    background: white;
     position: absolute;
     z-index: 99;
     width: 100%;
@@ -16,6 +15,6 @@
 table#dropdown-search {
     width: inherit;
     display: block;
-    height: 200px;
+    /*height: 200px;*/
     overflow-y: scroll;
 }
