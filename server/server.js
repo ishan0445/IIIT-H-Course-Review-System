@@ -175,8 +175,8 @@ app.post('/findByClick/:page', (req, res) => {
         res.json({
           allReviews: result,
           count,
-          nextUrl: `/allReviews/${next ? page + 1 : page}/`,
-          prevUrl: `/allReviews/${prev ? page - 1 : page}/`,
+          nextUrl: `/findByClick/${next ? page + 1 : page}/`,
+          prevUrl: `/findByClick/${prev ? page - 1 : page}/`,
           next,
           prev
         })
