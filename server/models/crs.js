@@ -49,6 +49,9 @@ var review = mongoose.model('reviews',{
     required: true,
     minlength: 10,
     trim: true
+  },
+  timestamp:{
+    type:Date
   }
 });
 

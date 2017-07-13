@@ -86,7 +86,8 @@ app.post('/newReviewEntry',(req,res) => {
     courseID: req.body.courseID,
     courseName: req.body.courseName,
     rating: req.body.rating,
-    description: req.body.description
+    description: req.body.description,
+    timestamp:new Date()
     // _creator:req.user._id
 
   });
@@ -128,7 +129,7 @@ app.get('/allReviews/:page', (req, res) => {
   const page = Number.parseInt(req.params.page)
   if (page) {
     Promise.all([
-      review.find({}).limit(limit).skip((page - 1) * limit).lean().sort({courseName:"ascending"}).exec(),
+      review.find({}).sort({timestamp:"descending"}).limit(limit).skip((page - 1) * limit).lean().sort({courseName:"ascending"}).exec(),
       review.count().exec()
     ]).then(([result, count]) => {
         const next = count > limit * page
@@ -166,7 +167,7 @@ app.post('/findByClick/:page', (req, res) => {
   //console.log(JSON.stringify(req.body.searchBy[0],undefined,3));
   if (page) {
     Promise.all([
-      review.find(req.body.searchBy[0]).limit(limit).skip((page - 1) * limit).lean().sort({courseName:"ascending"}).exec(),
+      review.find(req.body.searchBy[0]).sort({timestamp:"descending"}).limit(limit).skip((page - 1) * limit).lean().sort({courseName:"ascending"}).exec(),
       review.count().exec()
     ]).then(([result, count]) => {
         const next = count > limit * page
@@ -174,8 +175,8 @@ app.post('/findByClick/:page', (req, res) => {
         res.json({
           allReviews: result,
           count,
-          nextUrl: `/allReviews/${next ? page + 1 : page}/`,
-          prevUrl: `/allReviews/${prev ? page - 1 : page}/`,
+          nextUrl: `/findByClick/${next ? page + 1 : page}/`,
+          prevUrl: `/findByClick/${prev ? page - 1 : page}/`,
           next,
           prev
         })
@@ -212,15 +213,25 @@ app.post('/findByQuery/:page', (req, res) => {
   const page = Number.parseInt(req.params.page);
   if (page) {
     Promise.all([
-      review.find({"takenBy":{'$regex': req.body.query,$options:'i'}}).lean().exec(),
-      review.find({"courseName":{'$regex': req.body.query,$options:'i'}}).lean().exec(),
-      review.find({"description":{'$regex': req.body.query,$options:'i'}}).lean().exec(),
+      review.find({"takenBy":{'$regex': req.body.query,$options:'i'}}).sort({timestamp:"descending"}).lean().exec(),
+      review.find({"courseName":{'$regex': req.body.query,$options:'i'}}).sort({timestamp:"descending"}).lean().exec(),
+      review.find({"description":{'$regex': req.body.query,$options:'i'}}).sort({timestamp:"descending"}).lean().exec(),
       review.count().exec()
     ]).then(([result1,result2,result3, count]) => {
         const result = result1.concat(result2,result3)
         const paginateCollection = paginate(result,page, limit);
-        console.log(JSON.stringify(paginateCollection.data,undefined,3));
-        res.send(paginateCollection);
+        //console.log(JSON.stringify(paginateCollection.data,undefined,3));
+        const next = paginateCollection.currentPage < paginateCollection.totaPages
+        const prev = page > 1
+        res.json({
+          allReviews: paginateCollection.data,
+          count,
+          nextUrl: `/findByQuery/${next ? page + 1 : page}/`,
+          prevUrl: `/findByQuery/${prev ? page - 1 : page}/`,
+          next,
+          prev
+        })
+        //res.send(paginateCollection);
       })
   } else {
     res.sendStatus(400)
