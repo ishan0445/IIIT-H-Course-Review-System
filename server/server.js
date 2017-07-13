@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 const {mongoose} = require('./db/mongoose');
 const {newProf,review,newcourse} = require('./models/crs');
+const paginate = require("paginate-array");
+
 
 // const {User} = require('./models/user');
 // const {authenticate} = require('./middleware/authenticate');
@@ -149,7 +151,7 @@ app.get('/allReviews/:page', (req, res) => {
 /*
 Usage:
 A post request in which the body contains
-localhost:3000/findBy/:page
+localhost:3000/findByClick/:page
 {
 	"searchBy":[{
 		"takenBy": "prof 5",
@@ -158,7 +160,7 @@ localhost:3000/findBy/:page
 }
 
 */
-app.post('/findBy/:page', (req, res) => {
+app.post('/findByClick/:page', (req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page)
   //console.log(JSON.stringify(req.body.searchBy[0],undefined,3));
@@ -181,7 +183,49 @@ app.post('/findBy/:page', (req, res) => {
   } else {
     res.sendStatus(400)
   }
-})
+});
+
+
+/*
+Usage:
+localhost:3000/findByQuery/1/
+POST request
+body contains:
+{
+	"query":"prof 5"
+}
+
+returns->
+{
+    "currentPage": 5, <-- currentPage number
+    "perPage": 10,  <-- limit
+    "total": 32,    <-- count
+    "totaPages": 4, <-- total pages
+    "data": [] <-- contains data of the searched query
+}
+
+
+*/
+
+app.post('/findByQuery/:page', (req, res) => {
+  const limit = 10;
+  const page = Number.parseInt(req.params.page);
+  if (page) {
+    Promise.all([
+      review.find({"takenBy":{'$regex': req.body.query,$options:'i'}}).lean().exec(),
+      review.find({"courseName":{'$regex': req.body.query,$options:'i'}}).lean().exec(),
+      review.find({"description":{'$regex': req.body.query,$options:'i'}}).lean().exec(),
+      review.count().exec()
+    ]).then(([result1,result2,result3, count]) => {
+        const result = result1.concat(result2,result3)
+        const paginateCollection = paginate(result,page, limit);
+        console.log(JSON.stringify(paginateCollection.data,undefined,3));
+        res.send(paginateCollection);
+      })
+  } else {
+    res.sendStatus(400)
+  }
+});
 
 
 app.listen(port,() => {
