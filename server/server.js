@@ -220,8 +220,18 @@ app.post('/findByQuery/:page', (req, res) => {
     ]).then(([result1,result2,result3, count]) => {
         const result = result1.concat(result2,result3)
         const paginateCollection = paginate(result,page, limit);
-        console.log(JSON.stringify(paginateCollection.data,undefined,3));
-        res.send(paginateCollection);
+        //console.log(JSON.stringify(paginateCollection.data,undefined,3));
+        const next = paginateCollection.currentPage < paginateCollection.totaPages
+        const prev = page > 1
+        res.json({
+          allReviews: paginateCollection.data,
+          count,
+          nextUrl: `/findByQuery/${next ? page + 1 : page}/`,
+          prevUrl: `/findByQuery/${prev ? page - 1 : page}/`,
+          next,
+          prev
+        })
+        //res.send(paginateCollection);
       })
   } else {
     res.sendStatus(400)
