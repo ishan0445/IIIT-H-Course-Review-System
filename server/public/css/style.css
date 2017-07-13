@@ -18,3 +18,7 @@ table#dropdown-search {
     /*height: 200px;*/
     overflow-y: scroll;
 }
+
+#ratingStars{
+    color: hsl(171, 100%, 41%);
+}
