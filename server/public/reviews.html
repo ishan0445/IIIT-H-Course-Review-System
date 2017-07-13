@@ -41,12 +41,24 @@
             </p>
             <p class="subtitle">
                 for a course with course title or course ID:
-                <div class="field">
+            </p>
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input id="searchInput" class="input" type="text" placeholder="Find a review">
+              </p>
+              <p id="searchInputBtn" class="control">
+                <a class="button is-primary">
+                  Search
+                </a>
+              </p>
+            </div>
+            <!-- <div class="field">
                     <p class="control">
                         <input id="searchInputReview" class="input" type="text" placeholder="Find a course">
                     </p>
-                </div>
-            </p>
+                    <
+                </div> -->
+
 
         </div>
     </section>
@@ -186,28 +198,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <script>
-        // search functionality in review.html
-        let searchELReview = document.getElementById('searchInputReview');
-
-        searchELReview.addEventListener('keyup', filterCourse);
-
-        function filterCourse() {
-            let searchELValue = document.getElementById('searchInputReview').value.toUpperCase();
-            // console.log(searchELValue);
-
-            let courseContainer = document.getElementById('courseContainer');
-            let courseList = courseContainer.querySelectorAll('div.column.is-one-third');
-
-            for(let i = 0;i<courseList.length;i++){
-                let card = courseList[i].getElementsByClassName('title')[0];
-
-                if (card.innerHTML.toUpperCase().indexOf(searchELValue) > -1) {
-                    courseList[i].style.display = '';
-                } else {
-                    courseList[i].style.display = 'none';
-                }
-            }
-        }
+        // // search functionality in review.html
+        // let searchELReview = document.getElementById('searchInputReview');
+        //
+        // searchELReview.addEventListener('keyup', filterCourse);
+        //
+        // function filterCourse() {
+        //     let searchELValue = document.getElementById('searchInputReview').value.toUpperCase();
+        //     // console.log(searchELValue);
+        //
+        //     let courseContainer = document.getElementById('courseContainer');
+        //     let courseList = courseContainer.querySelectorAll('div.column.is-one-third');
+        //
+        //     for(let i = 0;i<courseList.length;i++){
+        //         let card = courseList[i].getElementsByClassName('title')[0];
+        //
+        //         if (card.innerHTML.toUpperCase().indexOf(searchELValue) > -1) {
+        //             courseList[i].style.display = '';
+        //         } else {
+        //             courseList[i].style.display = 'none';
+        //         }
+        //     }
+        // }
 
         $(function(){
             var isCourseSelected = false;
@@ -223,6 +235,31 @@
 
             $('#modalSuccessMessage, #modalHelpCourse, #modalHelpProf, #modalHelpReview').hide();
 
+            // search functionality
+            $('#searchInput').keypress(function(e){
+                if(e.keyCode==13)
+                    $('#searchInputBtn').click();
+            });
+
+            $('#searchInputBtn').click(function(){
+                let jsonData = {
+                    "query": $('#searchInput').val().trim();
+                }
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: "/findByQuery/1/",
+                    data: JSON.stringify(jsonData),
+                    dataType: "json",
+
+                    success: function(resultData) {
+                        setUpPageContents(resultData);
+                    },
+                    error: function (textStatus, errorThrown) {
+                        // handle error
+                    }
+                });
+            });
 
 
             // Modal Show
@@ -434,56 +471,70 @@
             });
 
 
+            var setUpPageCards = function(data){
+                for(let i = 0;i<data.allReviews.length;i++){
+                    let takenBy = data.allReviews[i].takenBy;
+                    let courseID = data.allReviews[i].courseID;
+                    let courseName = data.allReviews[i].courseName;
+                    let rating = data.allReviews[i].rating;
+                    let description = data.allReviews[i].description;
+                    // Setting rating stars
+                    let stars = '';
+                    for(let i = rating;i>0;i--)
+                        stars+='<i class="fa fa-star"></i>';
+                    for(let i = rating;i<5;i++)
+                        stars+='<i class="fa fa-star-o"></i>';
+                    let html = '<div class="columns"><div class="column is-12"> <div class="card"> <div class="card-header"> <p class="card-header-title"> ['+courseID+'] '+courseName+'</p> </div> <div class="card-content"> '+description+' </div> <footer class="card-footer"> <span class="card-footer-item">'+stars+'</span> <span class="card-footer-item"> '+takenBy+' </span> </footer> </div> </div> </div>';
+                    $('#reviewContainer').append(html);
+                }
+            }
+
+            var setUpPagination = function(data){
+                countPages = data.count;
+                isNext = data.next;
+                isPrev = data.prev;
+                nextUrl = data.nextUrl;
+                prevUrl = data.prevUrl;
+
+                $('.pagination-last-page > a').text(''+Math.ceil(countPages/10.0))
+
+                if(!isPrev){
+                    $('.pagination-previous').attr( 'disabled', 'disabled' );
+                }else{
+                    $('.pagination-previous').removeAttr( 'disabled');
+                }
+
+                if(!isNext){
+                    $('.pagination-next').attr( 'disabled', 'disabled' );
+                }else{
+                    $('.pagination-next').removeAttr( 'disabled');
+                }
+
+
+                if(countPages/10.0 <= 1){
+                    $('.pagination-ellipsis-with-end, .pagination-last-page').hide();
+                }else{
+                    $('.pagination-ellipsis-with-end, .pagination-last-page').show();
+                }
+            }
+
+
+            var setUpPageContents = function(data){
+                // setting up the cards with data
+                setUpPageCards(data);
+
+                //  setting up the pagination vlues
+                setUpPagination(data);
+            }
+
+
             // fetching all Reviews
             var fetchReviewsByPageUrl = function(pageUrl){
                 $('#reviewContainer').empty();
                 console.log('GET '+pageUrl);
                 $.get(pageUrl, function(data, status){
-                    // console.log('Status: '+status);
-                    // console.log(JSON.stringify(data,undefined,3));
-                    for(let i = 0;i<data.allReviews.length;i++){
-                        let takenBy = data.allReviews[i].takenBy;
-                        let courseID = data.allReviews[i].courseID;
-                        let courseName = data.allReviews[i].courseName;
-                        let rating = data.allReviews[i].rating;
-                        let description = data.allReviews[i].description;
-                        // Setting rating stars
-                        let stars = '';
-                        for(let i = rating;i>0;i--)
-                            stars+='<i class="fa fa-star"></i>';
-                        for(let i = rating;i<5;i++)
-                            stars+='<i class="fa fa-star-o"></i>';
-                        let html = '<div class="columns"><div class="column is-12"> <div class="card"> <div class="card-header"> <p class="card-header-title"> ['+courseID+'] '+courseName+'</p> </div> <div class="card-content"> '+description+' </div> <footer class="card-footer"> <span class="card-footer-item">'+stars+'</span> <span class="card-footer-item"> '+takenBy+' </span> </footer> </div> </div> </div>';
-                        $('#reviewContainer').append(html);
-                    }
-
-                    //  setting up the pagination vlues
-                    countPages = data.count;
-                    isNext = data.next;
-                    isPrev = data.prev;
-                    nextUrl = data.nextUrl;
-                    prevUrl = data.prevUrl;
-
-                    $('.pagination-last-page > a').text(''+Math.ceil(countPages/10.0))
-
-                    if(!isPrev){
-                        $('.pagination-previous').attr( 'disabled', 'disabled' );
-                    }else{
-                        $('.pagination-previous').removeAttr( 'disabled');
-                    }
-
-                    if(!isNext){
-                        $('.pagination-next').attr( 'disabled', 'disabled' );
-                    }else{
-                        $('.pagination-next').removeAttr( 'disabled');
-                    }
-
-
-                    if(countPages/10.0 <= 1){
-                        $('.pagination-ellipsis-with-end, .pagination-last-page').hide();
-                    }else{
-                        $('.pagination-ellipsis-with-end, .pagination-last-page').show();
-                    }
+                    // set up page content
+                    setUpPageContents(data);
                 });
             }
 
