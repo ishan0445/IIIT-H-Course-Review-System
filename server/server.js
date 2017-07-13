@@ -118,6 +118,9 @@ app.get('/getCourses',(req,res) => {
 });
 
 
+
+
+
 app.get('/allReviews/:page', (req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page)
@@ -141,6 +144,45 @@ app.get('/allReviews/:page', (req, res) => {
     res.sendStatus(400)
   }
 })
+
+
+/*
+Usage:
+A post request in which the body contains
+localhost:3000/findBy/:page
+{
+	"searchBy":[{
+		"takenBy": "prof 5",
+		"courseName": "ABC Lab"
+	}]
+}
+
+*/
+app.post('/findBy/:page', (req, res) => {
+  const limit = 10;
+  const page = Number.parseInt(req.params.page)
+  //console.log(JSON.stringify(req.body.searchBy[0],undefined,3));
+  if (page) {
+    Promise.all([
+      review.find(req.body.searchBy[0]).limit(limit).skip((page - 1) * limit).lean().sort({courseName:"ascending"}).exec(),
+      review.count().exec()
+    ]).then(([result, count]) => {
+        const next = count > limit * page
+        const prev = page > 1
+        res.json({
+          allReviews: result,
+          count,
+          nextUrl: `/allReviews/${next ? page + 1 : page}/`,
+          prevUrl: `/allReviews/${prev ? page - 1 : page}/`,
+          next,
+          prev
+        })
+      })
+  } else {
+    res.sendStatus(400)
+  }
+})
+
 
 app.listen(port,() => {
   console.log(`Started on port ${port}`);
