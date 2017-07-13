@@ -503,7 +503,7 @@
                         stars+='<i id="ratingStars" class="fa fa-star"></i>';
                     for(let i = rating;i<5;i++)
                         stars+='<i id="ratingStars" class="fa fa-star-o"></i>';
-                    let html = '<div class="columns"><div class="column is-12"> <div class="card"> <div class="card-header"> <p class="card-header-title"> <a href=reviews.html?course='+encodeURI(courseName)+'>['+courseID+'] '+courseName+'</a></p> </div> <div class="card-content"> '+description+' </div> <footer class="card-footer"> <span class="card-footer-item">'+stars+'</span> <span class="card-footer-item"> <a href=reviews.html?prof='+encodeURI(takenBy)+'>'+takenBy+' </span> </footer> </div> </div> </div>';
+                    let html = '<div class="columns"><div class="column is-12"> <div class="card"> <div class="card-header"> <p class="card-header-title"> <a href=reviews.html?course='+encodeURI(courseID)+'>['+courseID+'] '+courseName+'</a></p> </div> <div class="card-content"> '+description+' </div> <footer class="card-footer"> <span class="card-footer-item">'+stars+'</span> <span class="card-footer-item"> <a href=reviews.html?prof='+encodeURI(takenBy)+'>'+takenBy+' </span> </footer> </div> </div> </div>';
                     $('#reviewContainer').append(html);
                 }
             }
