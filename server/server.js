@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(__dirname+'/public'));
 
+
 app.post('/newReviewEntry',(req,res) => {
     console.log('here: '+JSON.stringify(req.body,undefined,3));
 
@@ -50,8 +51,7 @@ app.get('/getProfs',(req,res) => {
     res.status(400).send(e);
   });
 });
-
-app.get('/s',(req,res) => {
+app.get('/getCourses',(req,res) => {
   newcourse.find({
     // _creator:req.user._id
   }).then((courseData) => {
