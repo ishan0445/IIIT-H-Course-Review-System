@@ -225,7 +225,7 @@ app.post('/findByQuery/:page', (req, res) => {
         const prev = page > 1
         res.json({
           allReviews: paginateCollection.data,
-          count,
+          count:result.length,
           nextUrl: `/findByQuery/${next ? page + 1 : page}/`,
           prevUrl: `/findByQuery/${prev ? page - 1 : page}/`,
           next,
