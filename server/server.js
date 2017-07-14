@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = process.env.PORT;
 const mysecret = process.env.MYSEC || 'ishan-jayant-crs'
-const {cas,casClient} = require('./cas-auth.js');
+const {cas,casClient} = require('./CAS-AUTH/cas-auth.js');
 app.use(session({secret: mysecret}));
 
 
@@ -31,19 +31,26 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use(cas.ssout('/'))
-.use(cas.serviceValidate())
-.use(cas.authenticate());
+// app.use(cas.ssout('/'))
+// .use(cas.serviceValidate())
+// .use(cas.authenticate());
 
 // app.use(casClient.core());
+app.use(function(err, req, res, next) {
+  if(err){
+    res.redirect('/');
+  }
 
-app.get('/',(req, res) => {
+});
+
+app.get('/',cas.ssout('/'), cas.serviceValidate(), cas.authenticate(),(req, res) => {
   // attributes = JSON.stringify(req.session.cas.attributes);
   // console.log(attributes);
   res.redirect('/reviews.html')
 })
 
-app.post('/newReviewEntry',(req,res) => {
+
+app.post('/newReviewEntry',cas.ssout('/newReviewEntry'), cas.serviceValidate(), cas.authenticate(),(req,res) => {
     console.log('here: '+JSON.stringify(req.body,undefined,3));
 
   var crsData = new review({
@@ -66,7 +73,7 @@ app.post('/newReviewEntry',(req,res) => {
 });
 
 
-app.get('/getProfs',(req,res) => {
+app.get('/getProfs',cas.ssout('/getProfs'), cas.serviceValidate(), cas.authenticate(),(req,res) => {
   newProf.find({
     // _creator:req.user._id
   }).then((profData) => {
@@ -75,7 +82,7 @@ app.get('/getProfs',(req,res) => {
     res.status(400).send(e);
   });
 });
-app.get('/getCourses',(req,res) => {
+app.get('/getCourses',cas.ssout('/getCourses'), cas.serviceValidate(), cas.authenticate(),(req,res) => {
   newcourse.find({
     // _creator:req.user._id
   }).then((courseData) => {
@@ -89,7 +96,7 @@ app.get('/getCourses',(req,res) => {
 
 
 
-app.get('/allReviews/:page', (req, res) => {
+app.get('/allReviews/:page',cas.ssout('/'), cas.serviceValidate(), cas.authenticate(), (req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page)
   if (page) {
@@ -127,7 +134,7 @@ localhost:3000/findByClick/:page
 }
 
 */
-app.post('/findByClick/:page', (req, res) => {
+app.post('/findByClick/:page',cas.ssout('/'), cas.serviceValidate(), cas.authenticate(), (req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page)
   //console.log(JSON.stringify(req.body.searchBy[0],undefined,3));
@@ -174,7 +181,7 @@ returns->
 
 */
 
-app.post('/findByQuery/:page', (req, res) => {
+app.post('/findByQuery/:page', cas.ssout('/'), cas.serviceValidate(), cas.authenticate(),(req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page);
   if (page) {
@@ -204,7 +211,16 @@ app.post('/findByQuery/:page', (req, res) => {
     res.sendStatus(400)
   }
 });
+app.get('/logout', function(req, res) {
+  if (req.session.destroy) {
+    req.session.destroy();
+    // req.ession = null;
+  } else {
+    req.session = null;
+  }
+  res.redirect('/reviews.html')
 
+});
 
 app.listen(port,() => {
   console.log(`Started on port ${port}`);
