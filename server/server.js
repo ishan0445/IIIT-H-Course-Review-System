@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = process.env.PORT;
 const mysecret = process.env.MYSEC || 'ishan-jayant-crs'
-const {cas,casClient} = require('./CAS-AUTH/cas-auth.js');
+const {cas,casClient} = require('./cas-auth.js');
 app.use(session({secret: mysecret}));
 
 
