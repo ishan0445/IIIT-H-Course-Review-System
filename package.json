@@ -16,14 +16,19 @@
   "dependencies": {
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.2",
+    "connect-cas": "^1.6.0",
+    "connect-cas2": "^1.2.5",
+    "cookie-parser": "^1.4.3",
     "crypto-js": "^3.1.6",
     "express": "^4.14.0",
+    "express-session": "^1.15.3",
     "jsonwebtoken": "^7.1.9",
     "lodash": "^4.15.0",
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.9",
-    "mongoose-paginate": "^5.0.3",
+    "morgan": "^1.8.2",
     "paginate-array": "^2.0.0",
+    "serve-favicon": "^2.4.3",
     "validator": "^5.6.0"
   },
   "devDependencies": {
