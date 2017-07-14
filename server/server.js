@@ -218,7 +218,7 @@ app.get('/logout', function(req, res) {
   } else {
     req.session = null;
   }
-  res.redirect('/')
+  res.send('Logged Out');
 
 });
 
