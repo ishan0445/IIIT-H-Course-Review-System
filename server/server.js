@@ -1,23 +1,47 @@
 require('./config/config')
 const _ = require('lodash')
 const express = require('express');
-const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 const {mongoose} = require('./db/mongoose');
 const {newProf,review,newcourse} = require('./models/crs');
 const paginate = require("paginate-array");
-
-
-// const {User} = require('./models/user');
-// const {authenticate} = require('./middleware/authenticate');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+const session = require('express-session');
+const path = require('path');
+const favicon = require('serve-favicon');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const port = process.env.PORT;
+const mysecret = process.env.MYSEC || 'ishan-jayant-crs'
+const {cas,casClient} = require('./CAS-AUTH/cas-auth.js');
+app.use(session({secret: mysecret}));
 
-app.use(bodyParser.json());
+
+// app.use(casClient.core());
 
 app.use(express.static(__dirname+'/public'));
 
+
+
+app.use(express.static(__dirname + '/public'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+app.use(cas.ssout('/'))
+.use(cas.serviceValidate())
+.use(cas.authenticate());
+
+// app.use(casClient.core());
+
+app.get('/',(req, res) => {
+  // attributes = JSON.stringify(req.session.cas.attributes);
+  // console.log(attributes);
+  res.redirect('/reviews.html')
+})
 
 app.post('/newReviewEntry',(req,res) => {
     console.log('here: '+JSON.stringify(req.body,undefined,3));
