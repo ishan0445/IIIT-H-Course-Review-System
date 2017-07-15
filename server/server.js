@@ -241,7 +241,7 @@ app.get('/logout', function(req, res) {
     req.session = null;
   }
   //res.redirect('/reviews.html')
-	res.redirect('/reviews.html');
+	res.redirect('https://login.iiit.ac.in/logout');
 
 });
 
