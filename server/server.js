@@ -48,34 +48,14 @@ app.use(cas.ssout('/'),cas.serviceValidate(),cas.authenticate(), express.static(
 app.use(cas.ssout('/'))
 .use(cas.serviceValidate())
 .use(cas.authenticate());
-// app.use(cas.ssout('/'),cas.serviceValidate(),cas.authenticate(), express.static(__dirname + '/public'));
-// app.use(isAuthenticated);
-
-
-
-
-
-
 // app.use(casClient.core());
-
-// app.use(function(err, req, res, next) {
-//     res.status(err.status || 500);
-//     res.render('error', {
-//         message: err.message,
-//         error: {}
-//     });
-// });
-
-
-
-
 app.get('/',(req, res) => {
   // attributes = JSON.stringify(req.session.cas.attributes);
   // console.log(attributes);
   res.redirect('/reviews.html')
 })
 
-var logg = function(req,res,next){
+/*var logg = function(req,res,next){
   fs.appendFile("./reviewLog.log",`${req.session.cas.attributes.RollNo}:${req.session.cas.attributes.Name}:${req.body.description}\n`, function(err) {
       if(err) {
           return console.log(err);
@@ -84,8 +64,8 @@ var logg = function(req,res,next){
 
       //console.log("The file was saved!");
   });
-}
-app.post('/newReviewEntry',logg,(req,res) => {
+}*/
+app.post('/newReviewEntry',(req,res) => {
     console.log('here: '+JSON.stringify(req.body,undefined,3));
   // var check  = req.body.isAnonymus;
   var crsData = new review({
@@ -260,6 +240,7 @@ app.get('/logout', function(req, res) {
     req.session = null;
   }
   //res.redirect('/reviews.html')
+	res.send('');
 
 });
 
