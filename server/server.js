@@ -106,8 +106,7 @@ app.post('/newReviewEntry',logg,(req,res) => {
 
 
 app.get('/getProfs',(req,res) => {
-  console.log("statusCode: ", res.statusCode);
-  console.log("headers: ", res.headers);
+  
 
   newProf.find({
     // _creator:req.user._id
