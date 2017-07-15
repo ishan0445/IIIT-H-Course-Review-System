@@ -22,13 +22,10 @@ var newcourse = mongoose.model('courses',{
   }
 });
 var review = mongoose.model('reviews',{
-<<<<<<< HEAD
-=======
   postedBy: {
     type:String,
     trim:true
   },
->>>>>>> 8a35ee652cbcf655f683273a72aed95e2f7d7cd5
   takenBy: {
     type: String,
     required: true,
