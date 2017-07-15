@@ -142,40 +142,101 @@ app.get('/allReviews/:page',(req, res) => {
 })
 
 
+
 /*
 Usage:
 A post request in which the body contains
 localhost:3000/findByClick/:page
+1.
 {
-	"searchBy":[{
+	"searchBy":{
 		"takenBy": "prof 5",
-		"courseName": "A
-    Lab"
-	}]
+
+	}
+} -->> will return an array of courses taken by prof 5
+
+2.
+{
+	"searchBy":{
+		"courseName": "A lab",
+
+	}
 }
+-->> will return an array of professors who all have taken A lab
+
+3.
+{
+	"searchBy":{
+  "takenBy": "prof 5"
+		"courseName": "A lab",
+
+	}
+}
+->> will return the actual review
 
 */
-app.post('/findByClick/:page',(req, res) => {
+app.post('/findByClick/:page', (req, res) => { // 2nd phase development
   const limit = 10;
   const page = Number.parseInt(req.params.page)
   //console.log(JSON.stringify(req.body.searchBy[0],undefined,3));
   if (page) {
     Promise.all([
-      review.find(req.body.searchBy[0]).sort({timestamp:"descending"}).limit(limit).skip((page - 1) * limit).lean().sort({courseName:"ascending"}).exec(),
-      review.count().exec()
-    ]).then(([result, count]) => {
-        const next = count > limit * page
+      review.find(req.body.searchBy).lean().sort({courseName:"ascending"}).exec(),
+      review.find(req.body.searchBy).sort({timestamp:"descending"}).limit(limit).skip((page - 1) * limit).lean().sort({courseName:"ascending"}).exec(),
+
+      // review.find(req.body.searchBy).count().exec()
+    ]).then(([result, actual]) => {
+      var profArray = [];
+      var courseArray = [];
+      if("takenBy" in req.body.searchBy && !("courseName" in req.body.searchBy)){
+        for (var i=0; i<result.length; i++){
+          courseArray.push(result[i].courseName);
+        }
+        profArray.push(req.body.searchBy.takenBy);
+      }
+      else if("courseName" in req.body.searchBy && !("takenBy" in req.body.searchBy)){
+        for (var i=0; i<result.length; i++){
+          profArray.push(result[i].takenBy);
+        }
+        courseArray.push(req.body.searchBy.courseName);
+
+
+      }
+      if(profArray.length>1){
+          profArray = profArray.filter(function(elem, pos) {
+            return profArray.indexOf(elem) == pos;
+          })
+      }
+      if(courseArray.length>1){
+          courseArray = courseArray.filter(function(elem, pos) {
+            return courseArray.indexOf(elem) == pos;
+          })
+      }
+
+      if("takenBy" in req.body.searchBy && "courseName" in req.body.searchBy){
+        const next = actual.length > limit * page
         const prev = page > 1
+
         res.json({
-          allReviews: result,
-          count,
+          allReviews: actual,
+          count:actual.length,
           nextUrl: `/findByClick/${next ? page + 1 : page}/`,
           prevUrl: `/findByClick/${prev ? page - 1 : page}/`,
           next,
           prev
+        });
+      }
+      else {
+        res.json({
+          profArray,
+          courseArray
         })
+      }
+
+
       })
-  } else {
+  }
+  else {
     res.sendStatus(400)
   }
 });
