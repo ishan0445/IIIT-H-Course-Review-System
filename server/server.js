@@ -16,44 +16,74 @@ const app = express();
 const port = process.env.PORT;
 const mysecret = process.env.MYSEC || 'ishan-jayant-crs'
 const {cas,casClient} = require('./cas-auth.js');
+const fs = require('fs');
+
+
 app.use(session({secret: mysecret}));
 
 
 // app.use(casClient.core());
 
-app.use(express.static(__dirname+'/public'));
+// app.use(express.static(__dirname+'/public'));
 
 
 
-app.use(express.static(__dirname + '/public'));
+// app.use(express.static(__dirname + '/public'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// app.use(cas.ssout('/'))
-// .use(cas.serviceValidate())
-// .use(cas.authenticate());
+
+
+// app.use(isAuthenticated);
+app.use(cas.ssout('/'),cas.serviceValidate(),cas.authenticate(), express.static(__dirname + '/public'));
+
+app.use(cas.ssout('/'))
+.use(cas.serviceValidate())
+.use(cas.authenticate());
+// app.use(cas.ssout('/'),cas.serviceValidate(),cas.authenticate(), express.static(__dirname + '/public'));
+// app.use(isAuthenticated);
+
+
+
+
+
 
 // app.use(casClient.core());
-app.use(function(err, req, res, next) {
-  if(err){
-    res.redirect('/');
-  }
 
-});
+// app.use(function(err, req, res, next) {
+//     res.status(err.status || 500);
+//     res.render('error', {
+//         message: err.message,
+//         error: {}
+//     });
+// });
 
-app.get('/',cas.ssout('/'), cas.serviceValidate(), cas.authenticate(),(req, res) => {
+
+
+
+app.get('/',(req, res) => {
   // attributes = JSON.stringify(req.session.cas.attributes);
   // console.log(attributes);
   res.redirect('/reviews.html')
 })
 
+var logg = function(req,res,next){
+  fs.appendFile("./reviewLog.log",`${req.session.cas.attributes.RollNo}:${req.session.cas.attributes.Name}:${req.body.description}\n`, function(err) {
+      if(err) {
+          return console.log(err);
+      }
+      next();
 
-app.post('/newReviewEntry',cas.ssout('/newReviewEntry'), cas.serviceValidate(), cas.authenticate(),(req,res) => {
+      //console.log("The file was saved!");
+  });
+}
+app.post('/newReviewEntry',logg,(req,res) => {
     console.log('here: '+JSON.stringify(req.body,undefined,3));
-
+  // var check  = req.body.isAnonymus;
   var crsData = new review({
+    postedBy : req.body.isAnonymus?req.session.cas.attributes.Name:"Coward to display name",
     takenBy: req.body.takenBy,
     courseID: req.body.courseID,
     courseName: req.body.courseName,
@@ -63,6 +93,8 @@ app.post('/newReviewEntry',cas.ssout('/newReviewEntry'), cas.serviceValidate(), 
     // _creator:req.user._id
 
   });
+  // console.log("entered data: " +JSON.stringify(crsData,undefined,3));
+
 
   crsData.save().then((doc) => {
     res.send(doc);
@@ -73,7 +105,10 @@ app.post('/newReviewEntry',cas.ssout('/newReviewEntry'), cas.serviceValidate(), 
 });
 
 
-app.get('/getProfs',cas.ssout('/getProfs'), cas.serviceValidate(), cas.authenticate(),(req,res) => {
+app.get('/getProfs',(req,res) => {
+  console.log("statusCode: ", res.statusCode);
+  console.log("headers: ", res.headers);
+
   newProf.find({
     // _creator:req.user._id
   }).then((profData) => {
@@ -82,7 +117,7 @@ app.get('/getProfs',cas.ssout('/getProfs'), cas.serviceValidate(), cas.authentic
     res.status(400).send(e);
   });
 });
-app.get('/getCourses',cas.ssout('/getCourses'), cas.serviceValidate(), cas.authenticate(),(req,res) => {
+app.get('/getCourses',(req,res) => {
   newcourse.find({
     // _creator:req.user._id
   }).then((courseData) => {
@@ -96,7 +131,7 @@ app.get('/getCourses',cas.ssout('/getCourses'), cas.serviceValidate(), cas.authe
 
 
 
-app.get('/allReviews/:page',cas.ssout('/'), cas.serviceValidate(), cas.authenticate(), (req, res) => {
+app.get('/allReviews/:page',(req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page)
   if (page) {
@@ -134,7 +169,7 @@ localhost:3000/findByClick/:page
 }
 
 */
-app.post('/findByClick/:page',cas.ssout('/'), cas.serviceValidate(), cas.authenticate(), (req, res) => {
+app.post('/findByClick/:page',(req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page)
   //console.log(JSON.stringify(req.body.searchBy[0],undefined,3));
@@ -181,7 +216,7 @@ returns->
 
 */
 
-app.post('/findByQuery/:page', cas.ssout('/'), cas.serviceValidate(), cas.authenticate(),(req, res) => {
+app.post('/findByQuery/:page',(req, res) => {
   const limit = 10;
   const page = Number.parseInt(req.params.page);
   if (page) {
@@ -218,7 +253,7 @@ app.get('/logout', function(req, res) {
   } else {
     req.session = null;
   }
-  res.send('Logged Out');
+  res.redirect('/reviews.html')
 
 });
 
