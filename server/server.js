@@ -259,7 +259,7 @@ app.get('/logout', function(req, res) {
   } else {
     req.session = null;
   }
-  res.redirect('/reviews.html')
+  //res.redirect('/reviews.html')
 
 });
 
