@@ -210,6 +210,17 @@
     }
 
     $(function(){
+
+        // logout finctionality
+        $('#logout').click(()=>{
+            $.removeCookie('_ga', { path: '/' });
+            $.removeCookie('_gid', { path: '/' });
+            $.removeCookie('JSESSIONID', { path: '/' });
+            $.removeCookie('TGC', { path: '/' });
+            $.removeCookie('connect.sid', { path: '/' });
+            window.location.replace("logout");
+
+        });
         var isCourseSelected = false;
         var isProfSelected = false;
         var isReviewMinLength = false;
