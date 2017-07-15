@@ -19,6 +19,7 @@
     "connect-cas": "^1.6.0",
     "connect-cas2": "^1.2.5",
     "cookie-parser": "^1.4.3",
+<<<<<<< HEAD
     "crypto-js": "^3.1.6",
     "express": "^4.14.0",
     "express-session": "^1.15.3",
@@ -30,11 +31,29 @@
     "paginate-array": "^2.0.0",
     "serve-favicon": "^2.4.3",
     "validator": "^5.6.0"
+=======
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.14.0",
+    "express-session": "^1.15.3",
+    "fs": "0.0.1-security",
+    "jsonwebtoken": "^7.1.9",
+    "lodash": "^4.15.0",
+    "mongodb": "^2.2.5",
+    "mongoose": "^4.11.3",
+    "morgan": "^1.8.2",
+    "paginate-array": "^2.0.0",
+    "serve-favicon": "^2.4.3",
+    "validator": "^8.0.0"
+>>>>>>> 8a35ee652cbcf655f683273a72aed95e2f7d7cd5
   },
   "devDependencies": {
     "expect": "^1.20.2",
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
+<<<<<<< HEAD
     "supertest": "^2.0.0"
+=======
+    "supertest": "^3.0.0"
+>>>>>>> 8a35ee652cbcf655f683273a72aed95e2f7d7cd5
   }
 }
