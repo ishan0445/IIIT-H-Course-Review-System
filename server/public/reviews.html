@@ -97,6 +97,7 @@
 
 
         <!-- Pagination Bottom -->
+
         <nav class="pagination">
           <a class="pagination-previous">Previous</a>
           <a class="pagination-next">Next</a>
@@ -113,6 +114,23 @@
           </ul>
         </nav>
     </div>
+
+
+    <!-- Page footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="content has-text-centered">
+          <p>
+            <strong>IIIT-H CRS</strong> made with <a class="icon is-small"><i class="fa fa-heart is-small"></i></a> by the students for the students.
+          </p>
+          <p>
+            <a class="icon" href="https://github.com/ishan0445/IIIT-H-Course-Review-System" target="_blank">
+              <i class="fa fa-github"></i>
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
 
 
 
@@ -155,8 +173,9 @@
                       <!-- <p class="help is-danger">This email is invalid</p> -->
                     </div>
 
+
+                    <label class="label">Rating</label>
                     <div class="field">
-                      <label class="label">Rating</label>
                       <p class="control">
                         <span class="select is-success">
                           <select id="modalRating" >
@@ -168,6 +187,7 @@
                           </select>
                         </span>
                       </p>
+
                     </div>
 
                     <div class="field">
@@ -176,6 +196,15 @@
                         <textarea id="modalReview" class="textarea" placeholder="Review (minimum 10 characters)"></textarea>
                       </p>
                       <p id="modalHelpReview" class="help is-danger">review should be minimum of 10 characters</p>
+                    </div>
+
+                    <div class="feild">
+                        <p class="control">
+                          <label class="checkbox">
+                            <input id="modalIsAnonymus" type="checkbox" checked>
+                            keep me Anonymous.
+                          </label>
+                        </p>
                     </div>
 
                     <div class="field is-grouped">
@@ -446,17 +475,20 @@
 
                 // console.log('Clicked..' + JSON.stringify(courseListGlobal,undefined,3));
                 let takenBy = $('#modalProf').val();
-                var courseName = $('#modalCourse').val().split(']')[1].trim();
-                var courseID = $('#modalCourse').val().split(']')[0].substr(1);
+                let courseName = $('#modalCourse').val().split(']')[1].trim();
+                let courseID = $('#modalCourse').val().split(']')[0].substr(1);
+                let isAnonymus = $('#modalIsAnonymus').is(":checked");
+                let rating = parseInt($('#modalRating').val());
+                let description = $('#modalReview').val();
 
-                var rating = parseInt($('#modalRating').val());
-                var description = $('#modalReview').val();
+
 
                 jsonData = {
                     takenBy,
                     courseID,
                     courseName,
                     rating,
+                    isAnonymus,
                     description
                 };
                 // console.log(JSON.stringify(jsonData,undefined,3));

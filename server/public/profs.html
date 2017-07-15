@@ -70,9 +70,25 @@
 
         <div id="profContainer" class="columns is-multiline">
 
-
         </div>
     </div>
+
+    <!-- Page footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="content has-text-centered">
+          <p>
+            <strong>IIIT-H CRS</strong> made with <a class="icon is-small"><i class="fa fa-heart is-small"></i></a> by the students for the students.
+          </p>
+          <p>
+            <a class="icon" href="https://github.com/ishan0445/IIIT-H-Course-Review-System" target="_blank">
+              <i class="fa fa-github"></i>
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
+
 
     <!-- AddReview Modal -->
     <div class="modal">
@@ -133,6 +149,15 @@
                         <textarea id="modalReview" class="textarea" placeholder="Review (minimum 10 characters)"></textarea>
                       </p>
                       <p id="modalHelpReview" class="help is-danger">review should be minimum of 10 characters</p>
+                    </div>
+
+                    <div class="feild">
+                        <p class="control">
+                          <label class="checkbox">
+                            <input id="modalIsAnonymus" type="checkbox" checked>
+                            keep me Anonymous.
+                          </label>
+                        </p>
                     </div>
 
                     <div class="field is-grouped">
@@ -354,17 +379,20 @@
 
             // console.log('Clicked..' + JSON.stringify(courseListGlobal,undefined,3));
             let takenBy = $('#modalProf').val();
-            var courseName = $('#modalCourse').val().split(']')[1].trim();
-            var courseID = $('#modalCourse').val().split(']')[0].substr(1);
+            let courseName = $('#modalCourse').val().split(']')[1].trim();
+            let courseID = $('#modalCourse').val().split(']')[0].substr(1);
+            let isAnonymus = $('#modalIsAnonymus').is(":checked");
+            let rating = parseInt($('#modalRating').val());
+            let description = $('#modalReview').val();
 
-            var rating = parseInt($('#modalRating').val());
-            var description = $('#modalReview').val();
+
 
             jsonData = {
                 takenBy,
                 courseID,
                 courseName,
                 rating,
+                isAnonymus,
                 description
             };
             // console.log(JSON.stringify(jsonData,undefined,3));
@@ -422,22 +450,12 @@
         var setProfCards = function(){
             for(let i = 0;i<profListGlobal.length;i++){
                 let profName = profListGlobal[i].profName;
-                let html = '<div class="column is-one-third">'+
-                        '<div class="card">'+
-                        '<div class="card-content">'+
-                        '<p class="title">'+
-                        profName+
-                        '</p>'+
-                        '</div>'+
-                        '<footer class="card-footer">'+
-                        '<p class="card-footer-item">'+
-                        '<span>'+
-                        '<a href=reviews.html?prof='+encodeURI(profName)+'><i class="fa fa-star"></i> Get Reviews</a>'+
-                        '</span>'+
-                        '</p>'+
-                        '</footer>'+
-                        '</div>'+
-                        '</div>';
+                let profDesignation = profListGlobal[i].profDesignation;
+                let profQualification = profListGlobal[i].profQualification;
+                let researchAreas = profListGlobal[i].researchAreas;
+                let lab = profListGlobal[i].lab;
+
+                let html = `<div class="column is-one-third"> <div class="card"> <div class="card-content"> <p class="title">${profName}</p> <p class="subtitle">${profDesignation}</p> <p><strong>Qualofication: </strong>${profQualification}</p> <p><strong>Research Areas: </strong>${researchAreas}</p> <p><strong>Lab: </strong>${lab}</p> </div> <footer class="card-footer"> <p class="card-footer-item"><span><a href="reviews.html?prof=${profName}"><i class="fa fa-star"></i> Get Reviews</a></span></p> </footer> </div> </div>`;
                 $('#profContainer').append(html);
             }
         }
