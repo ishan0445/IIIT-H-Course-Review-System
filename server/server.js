@@ -11,16 +11,22 @@ const session = require('express-session');
 const path = require('path');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
-
+const MemoryStore = require('session-memory-store')(session);
 const app = express();
 const port = process.env.PORT;
 const mysecret = process.env.MYSEC || 'ishan-jayant-crs'
 const {cas,casClient} = require('./cas-auth.js');
 const fs = require('fs');
 
+app.use(cookieParser());
+// app.use(session({secret: mysecret}));
+app.use(session({
 
-app.use(session({secret: mysecret}));
-
+  secret: mysecret,
+  store: new MemoryStore(),
+  resave: true,
+    saveUninitialized: true
+}));
 
 // app.use(casClient.core());
 
@@ -32,7 +38,7 @@ app.use(session({secret: mysecret}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 
 
 
@@ -106,7 +112,8 @@ app.post('/newReviewEntry',logg,(req,res) => {
 
 
 app.get('/getProfs',(req,res) => {
-  
+  console.log("statusCode: ", res.statusCode);
+  console.log("headers: ", res.headers);
 
   newProf.find({
     // _creator:req.user._id
