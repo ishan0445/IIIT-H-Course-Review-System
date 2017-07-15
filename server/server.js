@@ -236,11 +236,12 @@ app.get('/logout', function(req, res) {
   if (req.session.destroy) {
     req.session.destroy();
     // req.ession = null;
+	  req.session = null
   } else {
     req.session = null;
   }
   //res.redirect('/reviews.html')
-	res.send('');
+	res.redirect('/reviews.html');
 
 });
 
