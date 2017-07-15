@@ -455,7 +455,7 @@
                 let researchAreas = profListGlobal[i].researchAreas;
                 let lab = profListGlobal[i].lab;
 
-                let html = `<div class="column is-one-third"> <div class="card"> <div class="card-content"> <p class="title">${profName}</p> <p class="subtitle">${profDesignation}</p> <p><strong>Qualofication: </strong>${profQualification}</p> <p><strong>Research Areas: </strong>${researchAreas}</p> <p><strong>Lab: </strong>${lab}</p> </div> <footer class="card-footer"> <p class="card-footer-item"><span><a href="reviews.html?prof=${profName}"><i class="fa fa-star"></i> Get Reviews</a></span></p> </footer> </div> </div>`;
+                let html = `<div class="column is-one-third"> <div class="card"> <div class="card-content"> <p class="title">${profName}</p> <p class="subtitle">${profDesignation}</p> <p><strong>Qualification: </strong>${profQualification}</p> <p><strong>Research Areas: </strong>${researchAreas}</p> <p><strong>Lab: </strong>${lab}</p> </div> <footer class="card-footer"> <p class="card-footer-item"><span><a href="reviews.html?prof=${profName}"><i class="fa fa-star"></i> Get Reviews</a></span></p> </footer> </div> </div>`;
                 $('#profContainer').append(html);
             }
         }
