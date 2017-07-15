@@ -22,6 +22,10 @@ var newcourse = mongoose.model('courses',{
   }
 });
 var review = mongoose.model('reviews',{
+  postedBy: {
+    type:String,
+    trim:true
+  },
   takenBy: {
     type: String,
     required: true,
