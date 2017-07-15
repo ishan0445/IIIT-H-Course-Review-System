@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.3/css/bulma.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>IIIT-H CRS</title>
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="reviews.html" class="navbar-item">
+                <h1 class="title is-4">IIIT-H Course Review System</h1>
+            </a>
+            <span id="navbar-toggle" class="navbar-burger burger" data-target="navMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+            </span>
+        </div>
+
+
+        <div id="navMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a href="reviews.html" class="navbar-item is-active">Reviews</a>
+                <a href="courses.html" class="navbar-item">Courses</a>
+                <a href="profs.html" class="navbar-item">Professors</a>
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a id="addReviewbutton" class="button is-primary"><i class="fa fa-star"></i> Add Review</a>
+                </div>
+                <hr class="navbar-divider">
+                <div class="navbar-item">
+                    <a id="logout" class="button is-outlined"><i class="fa fa-sign-out"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero is-primary">
+        <div class="container hero-body">
+            <p class="title">
+                Search
+            </p>
+            <p class="subtitle">
+                for a review with course name, course ID, professor name or review content:
+            </p>
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input id="searchInput" class="input" type="text" placeholder="Find a review">
+              </p>
+              <p id="searchInputBtn" class="control">
+                <a class="button is-primary">
+                  Search
+                </a>
+              </p>
+            </div>
+
+
+        </div>
+    </section>
+
+    <div class="container">
+
+        <p class="title">
+            Reviews:
+        </p>
+
+        <!-- Pagination Top -->
+        <nav class="pagination">
+          <a class="pagination-previous">Previous</a>
+          <a class="pagination-next">Next</a>
+          <ul class="pagination-list">
+            <li class="pagination-first-page">
+              <a class="pagination-link">1</a>
+            </li>
+            <li class="pagination-ellipsis-with-end">
+              <span class="pagination-ellipsis">&hellip;</span>
+            </li>
+            <li class="pagination-last-page">
+              <a class="pagination-link">-</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div id="reviewContainer">
+            <!-- Actual Reviews -->
+        </div>
+
+
+        <!-- Pagination Bottom -->
+        <nav class="pagination">
+          <a class="pagination-previous">Previous</a>
+          <a class="pagination-next">Next</a>
+          <ul class="pagination-list">
+            <li class="pagination-first-page">
+              <a class="pagination-link">1</a>
+            </li>
+            <li class="pagination-ellipsis-with-end">
+              <span class="pagination-ellipsis">&hellip;</span>
+            </li>
+            <li class="pagination-last-page">
+              <a class="pagination-link">-</a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+
+
+
+
+    <!-- AddReview Modal -->
+    <div class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+            <div class="card">
+                <div class="card-content">
+                    <div class="field">
+                      <label class="label">Course</label>
+                      <p class="control has-icons-left">
+                        <input id="modalCourse" class="input" type="text" placeholder="Course Name">
+                        <span class="icon is-small is-left">
+                          <i class="fa fa-book"></i>
+                        </span>
+                      </p>
+                      <p id="modalHelpCourse" class="help is-danger">course should be selected from the list</p>
+                      <table id="dropdown-search" class="table modalSearchOverlay is-bordered is-narrow">
+                          <tbody id="modalCourseList">
+                          </tbody>
+                      </table>
+                      <!-- <p class="help is-danger">This email is invalid</p> -->
+                    </div>
+
+                    <div class="field">
+                      <label class="label">Professor</label>
+                      <p class="control has-icons-left">
+                        <input id="modalProf" class="input" type="text" placeholder="Professor Name">
+                        <span class="icon is-small is-left">
+                          <i class="fa fa-user"></i>
+                        </span>
+                      </p>
+                      <p id="modalHelpProf" class="help is-danger">professor should be selected from the list</p>
+                      <table id="dropdown-search" class="table modalSearchOverlay is-bordered is-narrow">
+                          <tbody id="modalProfList">
+                          </tbody>
+                      </table>
+                      <!-- <p class="help is-danger">This email is invalid</p> -->
+                    </div>
+
+                    <div class="field">
+                      <label class="label">Rating</label>
+                      <p class="control">
+                        <span class="select is-success">
+                          <select id="modalRating" >
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                          </select>
+                        </span>
+                      </p>
+                    </div>
+
+                    <div class="field">
+                      <label class="label">Review</label>
+                      <p class="control">
+                        <textarea id="modalReview" class="textarea" placeholder="Review (minimum 10 characters)"></textarea>
+                      </p>
+                      <p id="modalHelpReview" class="help is-danger">review should be minimum of 10 characters</p>
+                    </div>
+
+                    <div class="field is-grouped">
+                      <p class="control">
+                        <button id="modalSubmit" class="button is-primary">Submit</button>
+                      </p>
+                      <p class="control">
+                        <button id="modalCancel" class="button is-link">Cancel</button>
+                      </p>
+                    </div>
+
+                    <article id="modalSuccessMessage" class="message">
+
+                  </article>
+                </div>
+            </div>
+
+
+      </div>
+      <button class="modal-close is-large"></button>
+    </div>
+
+    <!-- Java Script -->
+    <script type="text/javascript"  src="./js/scripts.js"> </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script>
+        $(function(){
+
+            // Setting up the navbar toggles
+            $('#navbar-toggle').click(()=>{
+                if($('#navMenu').hasClass('is-active')){
+                    $('#navMenu').removeClass('is-active');
+                    $('#navbar-toggle').removeClass('is-active');
+                }else{
+                    $('#navbar-toggle').addClass('is-active');
+                    $('#navMenu').addClass('is-active');
+                }
+            });
+
+            // fetching all Reviews
+            var fetchReviewsByPageUrl = function(pageUrl,query){
+                $('#reviewContainer').empty();
+                console.log('POST '+pageUrl);
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: pageUrl,
+                    data: JSON.stringify(query),
+                    dataType: "json",
+
+                    success: function(resultData) {
+                        setUpPageContents(resultData);
+                    },
+                    error: function (textStatus, errorThrown) {
+
+                    }
+                });
+            }
+
+            var fetchReviewsByPageNo = function(pageNo,query){
+                var pageUrl = "/findByQuery/"+pageNo+"/";
+                fetchReviewsByPageUrl(pageUrl,query);
+            }
+            //urlParam
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : sParameterName[1];
+                    }
+                }
+            };
+
+            if(getUrlParameter('course')){
+                $('#searchInput').val(getUrlParameter('course'));
+            }else if(getUrlParameter('prof')){
+                $('#searchInput').val(getUrlParameter('prof'));
+            }
+            fetchReviewsByPageNo(1,{'query':$('#searchInput').val()});
+
+
+            var isCourseSelected = false;
+            var isProfSelected = false;
+            var isReviewMinLength = false;
+            var countPages;
+            var isNext;
+            var isPrev;
+            var nextUrl;
+            var prevUrl;
+
+            // $('table#dropdown-search').height($('td').height() * 5);
+
+            $('#modalSuccessMessage, #modalHelpCourse, #modalHelpProf, #modalHelpReview').hide();
+
+            // search functionality
+            $('#searchInput').keypress(function(e){
+                if(e.keyCode==13)
+                    $('#searchInputBtn').click();
+            });
+
+            $('#searchInputBtn').click(function(){
+                let jsonData = {
+                    "query": $('#searchInput').val().trim()
+                }
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: "/findByQuery/1/",
+                    data: JSON.stringify(jsonData),
+                    dataType: "json",
+
+                    success: function(resultData) {
+                        setUpPageContents(resultData);
+                    },
+                    error: function (textStatus, errorThrown) {
+                        // handle error
+                    }
+                });
+            });
+
+
+            // Modal Show
+            $('#addReviewbutton').click(function(){
+                $('.modal').addClass('is-active');
+            });
+
+            $('.modal-background, .modal-close, #modalCancel').click(function(){
+                $('.modal').removeClass('is-active');
+            });
+
+            // Course list
+            var courseListGlobal = [];
+            $.get("/getCourses", function(data, status){
+                courseListGlobal = data.courseData;
+                // console.log('Status: '+data.courseData.length);
+                for(let i = 0;i<courseListGlobal.length;i++){
+                    let courseName = courseListGlobal[i].courseName;
+                    let courseID = courseListGlobal[i].courseID;
+                    let html = '<tr class="modalCourseSearchEntry"><td>['+
+                        courseID +
+                        '] </td><td>'+
+                        courseName +
+                        '</td></tr>';
+                    $('#modalCourseList').append(html);
+                }
+            });
+            $('#modalCourseList').hide();
+            $('#modalCourse').keyup(function(){
+                $('#modalHelpCourse').show();
+                $(this).addClass('is-danger');
+                isCourseSelected = false;
+                if($(this).val() === ''){
+                    $('#modalCourseList').hide();
+                }else{
+                    // console.log($(this).val());
+                    $('#modalCourseList').show();
+
+                    $('.modalCourseSearchEntry').each(function(){
+
+                        if($(this).text().toUpperCase().indexOf($('#modalCourse').val().toUpperCase()) > -1){
+                            $(this).show();
+                        }else{
+                            $(this).hide();
+                        }
+                    });
+                }
+
+            });
+            $('#modalCourseList').on('click','tr.modalCourseSearchEntry' , function(){
+                isCourseSelected = true;
+                $('#modalCourse').removeClass('is-danger').addClass('is-success');
+                $('#modalHelpCourse').hide();
+                $('#modalCourseList').hide();
+                $('#modalCourse').val($(this).text());
+            });
+
+
+
+
+
+            // Modal Profs search list
+            $.get("/getProfs", function(data, status){
+                // console.log('Status: '+status);
+                for(let i = 0;i<data.profData.length;i++){
+                    let profName = data.profData[i].profName;
+                    let html = '<tr><td class="modalProfSearchEntry">'+
+                        profName +
+                        '</td></tr>';
+                    $('#modalProfList').append(html);
+
+
+                }
+            });
+            $('#modalProfList').hide();
+            $('#modalProf').keyup(function(){
+                $('#modalHelpProf').show();
+                $(this).addClass('is-danger');
+                isProfSelected = false;
+                if($(this).val() === ''){
+                    $('#modalProfList').hide();
+                }else{
+                    $('#modalProfList').show();
+
+                    $('.modalProfSearchEntry').each(function(){
+                        if($(this).text().toUpperCase().indexOf($('#modalProf').val().toUpperCase()) > -1){
+                            $(this).show();
+                        }else{
+                            $(this).hide();
+                        }
+                    });
+                }
+
+            });
+            $('#modalProfList').on('click','tr td.modalProfSearchEntry' , function(){
+                isProfSelected = true;
+                $(this).addClass('is-success');
+                $('#modalProf').removeClass('is-danger').addClass('is-success');
+                $('#modalHelpProf').hide();
+                $('#modalProfList').hide();
+                $('#modalProf').val($(this).text());
+            });
+
+
+            //min length check for Review
+            $('#modalReview').keyup(function(){
+                // console.log($(this).val().trim().length);
+                if($(this).val().trim().length < 10 &&  $(this).val().trim().length > 0){
+                    isReviewMinLength = false;
+                    $(this).addClass('is-danger');
+                    $('#modalHelpReview').show();
+                }else{
+                    isReviewMinLength = true;
+                    $(this).removeClass('is-danger');
+                    $('#modalHelpReview').hide();
+                }
+            });
+
+            var isValidEntry =  function(){
+                if(isProfSelected && isCourseSelected && isReviewMinLength)
+                    return true;
+                return false;
+            }
+
+            // Modal Submit
+            $('#modalSubmit').click(function(){
+                $(this).addClass('is-loading');
+                if(isValidEntry() == false){
+                    $('#modalSubmit').removeClass('is-loading');
+                    $('#modalSuccessMessage').show();
+                    $('#modalSuccessMessage').addClass('is-danger');
+                    $('#modalSuccessMessage').html('<div class="message-header"><p>please correct the errors</p></div>');
+                    setTimeout(function() {
+                        $("#modalSuccessMessage").hide();
+                    }, 3000);
+                    return;
+                }
+
+
+
+
+                // console.log('Clicked..' + JSON.stringify(courseListGlobal,undefined,3));
+                let takenBy = $('#modalProf').val();
+                var courseName = $('#modalCourse').val().split(']')[1].trim();
+                var courseID = $('#modalCourse').val().split(']')[0].substr(1);
+
+                var rating = parseInt($('#modalRating').val());
+                var description = $('#modalReview').val();
+
+                jsonData = {
+                    takenBy,
+                    courseID,
+                    courseName,
+                    rating,
+                    description
+                };
+                // console.log(JSON.stringify(jsonData,undefined,3));
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: "/newReviewEntry",
+                    data: JSON.stringify(jsonData,undefined,3),
+                    dataType: "json",
+
+                    success: function(resultData) {
+                        isCourseSelected = false;
+                        isProfSelected = false;
+                        $('#modalCourse').removeClass('is-success');
+                        $('#modalProf').removeClass('is-success');
+                        $('#modalReview').removeClass('is-success');
+                        $('#modalSubmit').removeClass('is-loading');
+                        $('#modalSuccessMessage').show();
+                        $('#modalSuccessMessage').addClass('is-success');
+                        $('#modalSuccessMessage').html('<div class="message-header"><p>Review posted</p></div>');
+                        setTimeout(function() {
+                            $("#modalSuccessMessage").hide();
+                        }, 3000);
+                        //Clear Modal
+                        $('#modalProf').val('');
+                        $('#modalCourse').val('');
+                        $('#modalRating').val('1');
+                        $('#modalReview').val('');
+                    },
+                    error: function (textStatus, errorThrown) {
+                        isCourseSelected = false;
+                        isProfSelected = false;
+                        $('#modalCourse').removeClass('is-success');
+                        $('#modalReview').removeClass('is-success');
+                        $('#modalProf').removeClass('is-success');
+                        $('#modalSubmit').removeClass('is-loading');
+                        $('#modalSuccessMessage').show();
+                        $('#modalSuccessMessage').addClass('is-danger');
+                        $('#modalSuccessMessage').html('<div class="message-header"><p>Somethin went wrong</p></div>');
+                        setTimeout(function() {
+                            $("#modalSuccessMessage").hide();
+                        }, 3000);
+                        //Clear Modal
+                        $('#modalProf').val('');
+                        $('#modalCourse').val('');
+                        $('#modalRating').val('1');
+                        $('#modalReview').val('');
+                    }
+                });
+            });
+
+
+            var setUpPageCards = function(data){
+                $('#reviewContainer').empty();
+                for(let i = 0;i<data.allReviews.length;i++){
+                    let takenBy = data.allReviews[i].takenBy;
+                    let courseID = data.allReviews[i].courseID;
+                    let courseName = data.allReviews[i].courseName;
+                    let rating = data.allReviews[i].rating;
+                    let description = data.allReviews[i].description;
+                    // Setting rating stars
+                    let stars = '';
+                    for(let i = rating;i>0;i--)
+                        stars+='<i id="ratingStars" class="fa fa-star"></i>';
+                    for(let i = rating;i<5;i++)
+                        stars+='<i id="ratingStars" class="fa fa-star-o"></i>';
+                    let html = '<div class="columns"><div class="column is-12"> <div class="card"> <div class="card-header"> <p class="card-header-title"> <a href=reviews.html?course='+encodeURI(courseID)+'>['+courseID+'] '+courseName+'</a></p> </div> <div class="card-content"> '+description+' </div> <footer class="card-footer"> <span class="card-footer-item">'+stars+'</span> <span class="card-footer-item"> <a href=reviews.html?prof='+encodeURI(takenBy)+'>'+takenBy+' </span> </footer> </div> </div> </div>';
+                    $('#reviewContainer').append(html);
+                }
+            }
+
+            var setUpPagination = function(data){
+                countPages = data.count;
+                isNext = data.next;
+                isPrev = data.prev;
+                nextUrl = data.nextUrl;
+                prevUrl = data.prevUrl;
+
+                $('.pagination-last-page > a').text(''+Math.ceil(countPages/10.0))
+
+                if(!isPrev){
+                    $('.pagination-previous').attr( 'disabled', 'disabled' );
+                }else{
+                    $('.pagination-previous').removeAttr( 'disabled');
+                }
+
+                if(!isNext){
+                    $('.pagination-next').attr( 'disabled', 'disabled' );
+                }else{
+                    $('.pagination-next').removeAttr( 'disabled');
+                }
+
+
+                if(countPages/10.0 <= 1){
+                    $('.pagination-ellipsis-with-end, .pagination-last-page').hide();
+                }else{
+                    $('.pagination-ellipsis-with-end, .pagination-last-page').show();
+                }
+            }
+
+
+            var setUpPageContents = function(data){
+
+                // setting up the cards with data
+                setUpPageCards(data);
+
+                //  setting up the pagination vlues
+                setUpPagination(data);
+                $('.pagination').show();
+            }
+
+
+            // Pagination Listeners
+            $('.pagination-next').on('click',function(){
+                if(isNext){
+                    fetchReviewsByPageUrl(nextUrl,{'query':$('#searchInput').val()});
+                }
+            });
+            $('.pagination-previous').on('click',function(){
+                if(isPrev){
+                    fetchReviewsByPageUrl(prevUrl,{'query':$('#searchInput').val()});
+                }
+            });
+
+            $('.pagination-first-page').on('click',function(){
+                if(isPrev){
+                    fetchReviewsByPageNo(1,{'query':$('#searchInput').val()});
+                }
+            });
+
+            $('.pagination-last-page').on('click',function(){
+                if(isNext){
+                    fetchReviewsByPageNo(Math.ceil(countPages/10.0),{'query':$('#searchInput').val()});
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

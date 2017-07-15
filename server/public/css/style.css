@@ -1,0 +1,24 @@
+.button.nav-item {
+    margin-top: 7px;
+}
+
+.modalSearchOverlay {
+    position: relative;
+}
+
+.modalSearchOverlay {
+    position: absolute;
+    z-index: 99;
+    width: 100%;
+}
+
+table#dropdown-search {
+    width: inherit;
+    display: block;
+    /*height: 200px;*/
+    overflow-y: scroll;
+}
+
+#ratingStars{
+    color: hsl(171, 100%, 41%);
+}
