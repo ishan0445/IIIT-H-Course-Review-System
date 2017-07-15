@@ -69,7 +69,7 @@ app.post('/newReviewEntry',(req,res) => {
     console.log('here: '+JSON.stringify(req.body,undefined,3));
   // var check  = req.body.isAnonymus;
   var crsData = new review({
-    postedBy : req.body.isAnonymus?req.session.cas.attributes.Name:"Coward to display name",
+    postedBy : !req.body.isAnonymus?req.session.cas.attributes.Name:"Coward to display name",
     takenBy: req.body.takenBy,
     courseID: req.body.courseID,
     courseName: req.body.courseName,
