@@ -1,5 +1,5 @@
 {
-  "name": "node-todo-api",
+  "name": "node-crs-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -30,6 +30,7 @@
     "morgan": "^1.8.2",
     "paginate-array": "^2.0.0",
     "serve-favicon": "^2.4.3",
+    "session-memory-store": "^0.2.2",
     "validator": "^8.0.0"
   },
   "devDependencies": {
