@@ -66,7 +66,8 @@ app.get('/',(req, res) => {
   });
 }*/
 app.post('/newReviewEntry',(req,res) => {
-    console.log('here: '+JSON.stringify(req.body,undefined,3));
+    console.log('here: '+JSON.stringify(req.session.cas.attributes,undefined,3));
+	
   // var check  = req.body.isAnonymus;
   var crsData = new review({
     postedBy : !req.body.isAnonymus?req.session.cas.attributes.Name:"Anonymus",
@@ -92,8 +93,9 @@ app.post('/newReviewEntry',(req,res) => {
 
 
 app.get('/getProfs',(req,res) => {
-  console.log("statusCode: ", res.statusCode);
-  console.log("headers: ", res.headers);
+//   console.log("statusCode: ", res.statusCode);
+//   console.log("headers: ", res.headers);
+	console.log('here: '+JSON.stringify(req.session.cas.attributes,undefined,3));
 
   newProf.find({
     // _creator:req.user._id
@@ -104,6 +106,7 @@ app.get('/getProfs',(req,res) => {
   });
 });
 app.get('/getCourses',(req,res) => {
+	console.log('here: '+JSON.stringify(req.session.cas.attributes,undefined,3));
   newcourse.find({
     // _creator:req.user._id
   }).then((courseData) => {
@@ -264,6 +267,7 @@ returns->
 */
 
 app.post('/findByQuery/:page',(req, res) => {
+	console.log('here: '+JSON.stringify(req.session.cas.attributes,undefined,3));
   const limit = 10;
   const page = Number.parseInt(req.params.page);
   if (page) {
@@ -294,6 +298,7 @@ app.post('/findByQuery/:page',(req, res) => {
   }
 });
 app.get('/logout', function(req, res) {
+	console.log('here: '+JSON.stringify(req.session.cas.attributes,undefined,3));
   if (req.session.destroy) {
     req.session.destroy();
     // req.ession = null;
