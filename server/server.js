@@ -12,11 +12,18 @@ const path = require('path');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const MemoryStore = require('session-memory-store')(session);
+const http = require('http')
 const app = express();
 const port = process.env.PORT;
 const mysecret = process.env.MYSEC || 'ishan-jayant-crs'
 const {cas,casClient} = require('./cas-auth.js');
 const fs = require('fs');
+const socketIO = require('socket.io');
+var server = http.createServer(app);
+var io = socketIO(server);
+const publicPath = path.join(__dirname ,'/public');
+
+
 
 app.use(cookieParser());
 // app.use(session({secret: mysecret}));
@@ -44,11 +51,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // app.use(isAuthenticated);
 app.use(cas.ssout('/'),cas.serviceValidate(),cas.authenticate(), express.static(__dirname + '/public'));
+// app.use(express.static(publicPath));
 
 app.use(cas.ssout('/'))
 .use(cas.serviceValidate())
 .use(cas.authenticate());
 // app.use(casClient.core());
+
+var connectedUsers = 0;
+io.on('connection',(socket) => {
+  console.log('New User Connected');
+  connectedUsers += 1;
+  io.emit('usercount', {connectedUsers});
+
+
+  socket.on('disconnect',() => {
+    console.log('User was disconnected');
+    connectedUsers -= 1;
+    io.emit('usercount', {connectedUsers});
+  });
+});
 app.get('/',(req, res) => {
   // attributes = JSON.stringify(req.session.cas.attributes);
   // console.log(attributes);
@@ -68,7 +90,7 @@ app.get('/',(req, res) => {
 app.post('/newReviewEntry',(req,res) => {
     console.log('here: '+JSON.stringify(req.session.cas.attributes.Name,undefined,3));
 	console.log('here: '+JSON.stringify(req.session.cas.attributes.RollNo,undefined,3));
-	
+
   // var check  = req.body.isAnonymus;
   var crsData = new review({
     postedBy : !req.body.isAnonymus?req.session.cas.attributes.Name:"Anonymus",
@@ -315,9 +337,14 @@ app.get('/logout', function(req, res) {
 
 });
 
-app.listen(port,() => {
-  console.log(`Started on port ${port}`);
-});
+
+
+
+
+server.listen(port,() => {
+  console.log(`Server is up on port ${port}`);
+})
+
 
 
 module.exports = {app};
