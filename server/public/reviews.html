@@ -119,17 +119,27 @@
     <!-- Page footer -->
     <footer class="footer">
       <div class="container">
+
         <div class="content has-text-centered">
           <p>
             <strong>IIIT-H CRS</strong> made with <a class="icon is-small"><i class="fa fa-heart is-small"></i></a> by the students for the students.
           </p>
+
           <p>
             <a class="icon" href="https://github.com/ishan0445/IIIT-H-Course-Review-System" target="_blank">
               <i class="fa fa-github"></i>
             </a>
           </p>
+
+            <p id="users">
+            </p>
+
+
+
+
         </div>
       </div>
+
     </footer>
 
 
@@ -228,6 +238,13 @@
     </div>
 
     <!-- Java Script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="http://localhost:3000/socket.io/socket.io.js"></script> -->
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src='/js/users.js'></script>
+    <script src="/js/mustache.js"></script>
+
+
     <script type="text/javascript"  src="./js/scripts.js"> </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
@@ -641,6 +658,7 @@
             });
         });
     </script>
+
 </body>
 
 </html>
